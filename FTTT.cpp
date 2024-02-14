@@ -11,26 +11,28 @@ int fib(long int n)
 } 
 
 int main(){
-    
+    // Using block
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::duration;
     using std::chrono::milliseconds;
 
-    int in;
-
-    std::cin >> in;
-
+    // Start time
     auto t1 = high_resolution_clock::now();
 
-    fib(in);
+    // Run function
+    fib(12);
 
+    // End time
     auto t2 = high_resolution_clock::now();
 
     // Getting number of milliseconds as a double.
     duration<double, std::milli> timeDouble = t2 - t1;
 
-    std::cout << 10 - (timeDouble.count() * 100) << " FTTT score\n";
+    // Calculating Score
+    std::cout << 100000 - (timeDouble.count() * 1000000) << " FTTT score\n";
+
+    // Return success
     return 0;
 
 }
