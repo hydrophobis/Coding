@@ -1,51 +1,52 @@
 #include <string>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace std;
+
 string password;
+bool outputAll = true;
+int guesses = 0;
 
 bool checkPw(string pw){
-     if (pw == password){
-          return true;
-     } else {
-          return false;
-     }
+    if(outputAll == true){
+        cout << "Guessing password: " << pw << "               Guess number: " << guesses << "\n";
+    }
+    if (pw == password){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 int main(){
-     string chars[52] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
+    string chars[100] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                          "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-                         "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-     int charCount = 1;
-     int pwLength;
-     int charCounter = 1;
-     string char2 = NULL;
-     string char1 = NULL;
-     string currentPw = "a";
+                         "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5",
+                         "6", "7", "8", "9", "0", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "=", "+",
+                         "[", "]", "{", "}", "|", ",", "'", "<", ">", "/", "?", "~"};
+    int pwLength = 0;
 
-     cout << "Password: ";
-     cin >> password;
-     cout << "\n";
-     cout << "Password Length: ";
-     cin >> pwLength;
-     
+    cout << "Password: ";
+    cin >> password;
+    cout << "\n";
+    cout << "Password Length: ";
+    cin >> pwLength;
 
-     // While guessed password length is equal to or less than password, make a guess
-     while (currentPw != password) {
+    int i = 0;
 
-          char1 = chars[rand() % 0 + 51];
-          char2 = chars[rand() % 0 + 51];
+    // While guessed password is not equal to password, make a guess
+    while (true) {
+        string currentPw = "";
+        for (int j = 0; j < pwLength; ++j) {
+            currentPw += chars[rand() % 85];
+        }
 
-          currentPw = currentPw + char2;
+        guesses++;
 
-          if (currentPw.length() > pwLength){
-               currentPw = "";
-          }
-
-          if (checkPw(currentPw) == true){
-               cout << "Password Guessed: " << currentPw;
-               return 0;
-          }
-     }
+        if (checkPw(currentPw) == true) {
+            cout << "Guess successful: " << password << " in " << guesses << " guesses" << "\n";
+            return 0;
+        }
+    }
 }
