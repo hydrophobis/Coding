@@ -1,0 +1,12 @@
+{
+  "name": "gpt-game",
+  "version": "1.0.0",
+  "description": "A game made only by Chat GPT",
+  "main": "game.js",
+  "scripts": {
+    "start": "game.js"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"  // Add any other dependencies your module may need
+  }
+}
