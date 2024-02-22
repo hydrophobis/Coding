@@ -201,7 +201,7 @@ public:
 
 // Function to generate a random event in the dungeon (e.g., trap or chest)
 void generateRandomEvent(Player& player, vector<Trap>& traps, vector<Chest>& chests) {
-    int randomEvent = rand() % 10; // Increase the likelihood of random events
+    int randomEvent = rand() % 15; // Increase the likelihood of random events
     if (randomEvent < 4) {
         // Player encounters a chest
         chests.emplace_back();
@@ -238,7 +238,7 @@ void explorePhase(Player& player, vector<Enemy>& enemies, vector<Trap>& traps, v
         enemies.emplace_back(50 + (player.level - 1) * 10, 15 + (player.level - 1) * 5, player.level,
                              "Enemy" + to_string(i + 1), "SpecialAttack" + to_string(i + 1));
     }
-    
+
     for (auto& enemy : enemies) {
         player.display();
         enemy.display();
@@ -574,9 +574,7 @@ int main() {
             default:
                 cout << "Invalid choice. Please try again.\n \n";
             case 4:
-            try {1 + 1;}
-                catch(invalid_argument& e){cerr << e.what() << endl; return -1;}
-        }
+                cout << "error";
 
         generateRandomEvent(player, traps, chests);
 
