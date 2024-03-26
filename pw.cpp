@@ -1,16 +1,18 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
 string password;
 bool outputAll = true;
-int guesses = 0;
+int guessesI = 0;
 
 bool checkPw(string pw){
     if(outputAll == true){
-        cout << "Guessing password: " << pw << "               Guess number: " << guesses << "\n";
+        cout << "Guessing password: " << pw << "               Guess number: " << guessesI << "\n";
     }
     if (pw == password){
         return true;
@@ -27,6 +29,8 @@ int main(){
                          "[", "]", "{", "}", "|", ",", "'", "<", ">", "/", "?", "~"};
     int pwLength = 0;
 
+    vector<string> guesses = {};
+
     cout << "Password: ";
     cin >> password;
     cout << "\n";
@@ -40,13 +44,18 @@ int main(){
         string currentPw = "";
         for (int j = 0; j < pwLength; ++j) {
             currentPw += chars[rand() % 85];
-        }
+        };
 
-        guesses++;
+        guesses.insert(currentPw);
+
+        guessesI++;
 
         if (checkPw(currentPw) == true) {
-            cout << "Guess successful: " << password << " in " << guesses << " guesses" << "\n";
+            if (find(guesses.begin(), guesses.end(), currentPw) != guesses.end()){
+                break;
+            };
+            cout << "Guess successful: " << password << " in " << guessesI << " guesses" << "\n";
             return 0;
-        }
+        };
     }
 }
