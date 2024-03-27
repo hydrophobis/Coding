@@ -1,3 +1,5 @@
+// 2.1 Million Guesses Per Second
+// aid! 0.260845 in 5.7 Million
 #include <iostream>
 #include <string>
 #include <vector>
