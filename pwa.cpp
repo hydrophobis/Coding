@@ -40,6 +40,8 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
             }
         }
 
+        cout << currentString << "\n";
+
         // Undoing the changes for the next iteration
         currentString.pop_back();
         if (islower(c)) {
