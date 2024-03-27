@@ -1,4 +1,4 @@
-// 2.1 Million Guesses Per Second
+// 2.2 Million Guesses Per Second
 // aid! 0.260845 in 5.7 Million
 #include <iostream>
 #include <string>
@@ -32,11 +32,11 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
     if (sha256(currentString) == password) {
         auto end = steady_clock::now();
         double elapsed_seconds = duration<double>(end - start).count();
-        cout << "Found " << password << "(" << currentString << ")" << " with " << guesses << " guesses" << " in " << elapsed_seconds << " seconds" << endl;
+        cout << "\n\n\n\n" << "Found " << password << "(" << currentString << ")" << " with " << guesses << " guesses" << " in " << elapsed_seconds << " seconds" << endl;
         exit(0);
     }
 
-    cout << sha256(currentString) << "\n";
+    //cout << sha256(currentString) << "\n";
 
     for (char c : charSet) {
         currentString.push_back(c);
