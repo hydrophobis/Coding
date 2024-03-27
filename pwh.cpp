@@ -11,7 +11,7 @@
 using namespace std;
 using namespace chrono;
 
-// Function to generate SHA-256 hash of a string
+// Function to generate SHA256 hash of a string
 string sha256(const string& str) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;

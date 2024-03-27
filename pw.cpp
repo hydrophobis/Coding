@@ -38,7 +38,7 @@ int main() {
     while (true) {
         string currentPw = "";
         for (int j = 0; j < pwLength; ++j) {
-            currentPw += chars[rand() % 85];
+            currentPw += chars[rand() % 89];
         };
 
         ++guessesI;
@@ -46,7 +46,7 @@ int main() {
         if (checkPw(currentPw)) {
             auto stop = high_resolution_clock::now();
             auto duration = duration_cast<milliseconds>(stop - start);
-            cout << "Guess successful: " << password << " in " << guessesI << " guesses, took " << duration.count() << " milliseconds\n";
+            cout << "Guess successful: " << password << " in " << guessesI << " guesses, took " << duration.count()/1000 << "s\n";
             return 0;
         };
     }

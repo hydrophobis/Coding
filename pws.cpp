@@ -41,7 +41,7 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
 }
 
 int main() {
-    string charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+[]{}|,',.<>?~";
+    string charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-_=+[]{}|,'.<>?~";
     string password;
     int maxLength;
 
