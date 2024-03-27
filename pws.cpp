@@ -1,4 +1,5 @@
-// 101 Thousand Guesses Per Second
+// 101.4 Thousand Guesses Per Second
+// aid! 0.814276s
 #include <iostream>
 #include <string>
 #include <vector>

@@ -1,4 +1,5 @@
 // 13500 Guesses Per Second
+// aid! 604.345926 in 10.3 Million
 #include <string>
 #include <iostream>
 #include <cstdlib>

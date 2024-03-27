@@ -1,5 +1,6 @@
-// 6.3 Million Guesses Per Second
-// Aid! 0.949004s in 5.7 Million
+// Test file, No output
+// 49.2 Million Guesses Per Second
+// aid! 0.116392s in 5.7 Million Guesses
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,8 +8,11 @@
 
 using namespace std;
 
+string currentString;
+int guesses = 0;
+
 // Function to generate combinations using recursive backtracking
-void generateCombinations(const string& charSet, int maxLength, const string& password, string& currentString, int& guesses) {
+void generateCombinations(string charSet, int maxLength, string password) {
     static auto start = chrono::steady_clock::now();
 
     if (currentString == password) {
@@ -17,8 +21,6 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
         cout << "Found " << password << " with " << guesses << " guesses" << " in " << elapsed_seconds.count() << " seconds" << endl;
         exit(0);
     }
-
-    cout << currentString << "\n";
 
     for (char c : charSet) {
         currentString.push_back(c);
@@ -44,10 +46,7 @@ int main() {
     cout << "Length: ";
     cin >> maxLength;
 
-    string currentString;
-    int guesses = 0;
-
-    generateCombinations(charSet, maxLength, password, currentString, guesses);
+    generateCombinations(charSet, maxLength, password);
 
     return 0;
 }
