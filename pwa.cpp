@@ -29,9 +29,7 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
             generateCombinations(charSet, maxLength, password, currentString, guesses);
         }
 
-        cout << currentString << "\n";
-
-        // Undoing the changes for the next iteration
+        // Remove the last character to try the next combination
         currentString.pop_back();
     }
 }
