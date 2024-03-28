@@ -12,6 +12,8 @@
 using namespace std;
 using namespace chrono;
 
+bool debug = false;
+
 string sha256(const string &str) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -34,6 +36,10 @@ void attemptCombination(const string &charSet, int maxLength, const string &pass
             cout << "\nFound " << passwordHash << "(" << currentString << ")" << " with " << guesses << " guesses";
         }
         return;
+    }
+
+    if (debug == true){
+        cout << currentString << "\n";
     }
 
     for (char c : charSet) {
@@ -66,27 +72,29 @@ void incrementPasswordLength(const string &charSet, int &maxLength, const string
 int main(int argc, char* argv[]){
     string charSet = "123abcdefghijklmnopqrstuvwxyz456ABCDEFGHIJKLMNOPQRSTUVWXYZ7890!@#$%^&*()-_=+[]{}|,'.<>?~";
     string passwordHash;
-    int maxLength;
-    bool debug = false;
+    int maxLength = 0;
+    int argIndex = 1;
 
-    if (argc < 2 || argc > 4) {
-        cout << "Usage: " << argv[0] << " [-h password_hash] [-p password] [password_length]\n";
+    if (argc < 2 || argc > 5) {
+        cout << "Usage: " << argv[0] << " [-h password_hash | -p password] [password_length] [-o]\n";
         return 1;
     }
 
-    int argIndex = 1;
     if (string(argv[argIndex]) == "-h") {
         passwordHash = argv[argIndex + 1];
         argIndex += 2;
-    } else if(string(argv[argIndex]) == "-s"){
+    } else if (string(argv[argIndex]) == "-p") {
         passwordHash = sha256(argv[argIndex + 1]);
         argIndex += 2;
     }
 
-    maxLength = atoi(argv[argIndex++]);
-
-    if (argc > argIndex && atoi(argv[argIndex]) == 1) {
+    if (argIndex < argc && string(argv[argIndex]) == "-o") {
         debug = true;
+        argIndex++; 
+    }
+
+    if (argIndex < argc) {
+        maxLength = atoi(argv[argIndex]);
     }
 
     atomic<bool> found(false);
