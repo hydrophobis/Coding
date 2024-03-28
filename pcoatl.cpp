@@ -1,5 +1,3 @@
-// 490 Thousand Guessues Per Second
-// aid! 0.2445s in 124 Thousand
 #include <iostream>
 #include <string>
 #include <vector>
@@ -39,7 +37,6 @@ void attemptCombination(const string &charSet, int maxLength, const string &pass
     }
 
     for (char c : charSet) {
-        if (found) break;
         guesses++;
         attemptCombination(charSet, maxLength, passwordHash, currentString + c, found, guesses);
     }
@@ -52,15 +49,45 @@ void workerThread(const string &charSet, int maxLength, const string &passwordHa
     }
 }
 
-int main() {
+void incrementPasswordLength(const string &charSet, int &maxLength, const string &passwordHash, atomic<bool> &found, atomic<long long> &guesses, int numThreads) {
+    cout << "Password not found in length " << maxLength << ", incrementing length\n";
+    maxLength++;
+
+    vector<thread> threads;
+    for (int i = 0; i < numThreads; ++i) {
+        threads.emplace_back(workerThread, ref(charSet), maxLength, ref(passwordHash), ref(found), ref(guesses), i, numThreads);
+    }
+
+    for (auto &t : threads) {
+        t.join();
+    }
+}
+
+int main(int argc, char* argv[]){
     string charSet = "123abcdefghijklmnopqrstuvwxyz456ABCDEFGHIJKLMNOPQRSTUVWXYZ7890!@#$%^&*()-_=+[]{}|,'.<>?~";
     string passwordHash;
     int maxLength;
+    bool debug = false;
 
-    cout << "Hashed Input Password: ";
-    cin >> passwordHash;
-    cout << "Length Before Hashing: ";
-    cin >> maxLength;
+    if (argc < 2 || argc > 4) {
+        cout << "Usage: " << argv[0] << " [-h password_hash] [-p password] [password_length]\n";
+        return 1;
+    }
+
+    int argIndex = 1;
+    if (string(argv[argIndex]) == "-h") {
+        passwordHash = argv[argIndex + 1];
+        argIndex += 2;
+    } else if(string(argv[argIndex]) == "-s"){
+        passwordHash = sha256(argv[argIndex + 1]);
+        argIndex += 2;
+    }
+
+    maxLength = atoi(argv[argIndex++]);
+
+    if (argc > argIndex && atoi(argv[argIndex]) == 1) {
+        debug = true;
+    }
 
     atomic<bool> found(false);
     atomic<long long> guesses(0);
@@ -80,9 +107,10 @@ int main() {
     auto end = high_resolution_clock::now();
     duration<double, std::milli> duration_ms = end - start;
 
-    if (!found) {
-        cout << "Password not found within the specified length.\n";
+    while (!found) {
+        incrementPasswordLength(charSet, maxLength, passwordHash, found, guesses, numThreads);
     }
+
     cout << " in " << duration_ms.count() / 1000 << "s\n";
 
     return 0;
