@@ -38,10 +38,6 @@ void attemptCombination(const string &charSet, int maxLength, const string &pass
         return;
     }
 
-    if (debug == true){
-        cout << currentString << "\n";
-    }
-
     for (char c : charSet) {
         guesses++;
         attemptCombination(charSet, maxLength, passwordHash, currentString + c, found, guesses);
@@ -87,6 +83,8 @@ int main(int argc, char* argv[]){
         passwordHash = sha256(argv[argIndex + 1]);
         argIndex += 2;
     }
+
+    argIndex++;
 
     if (argIndex < argc && string(argv[argIndex]) == "-o") {
         debug = true;
