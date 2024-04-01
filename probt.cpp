@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 // Function to attempt to find the seed of an LCG
 // given the first output and the LCG parameters
@@ -14,13 +16,16 @@ bool findSeed(int firstOutput, int a, int c, int m, int& seed) {
 }
 
 int main() {
-    // LCG parameters
-    int a = 1664525; // example multiplier
-    int c = 1013904223; // example increment
-    int m = 4294967296; // example modulus (2^32)
 
-    // First output value of the LCG
-    int firstOutput = 123456789; // Example output
+    srand(time(0));
+    int output = rand()
+
+    // LCG parameters
+    int a = 2; // example multiplier
+    int c = 3; // example increment
+    int m = 6; // example modulus (2^32)
+
+    int firstOutput = output; // Example output
 
     // Seed to be found
     int seed;
