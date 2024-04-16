@@ -1,7 +1,16 @@
+Copy below and paste it into sort.py whever done sorting:
+
 from bs4 import BeautifulSoup
 
 html = """
-
+<html>
+<body>
+<div class="content">
+    <p>This is a paragraph.</p>
+    <p>This is another paragraph.</p>
+</div>
+</body>
+</html>
 """
 
 soup = BeautifulSoup(html, 'html.parser')
