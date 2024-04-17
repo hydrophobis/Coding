@@ -1,5 +1,3 @@
-Copy below and paste it into sort.py whever done sorting:
-
 from bs4 import BeautifulSoup
 
 html = """
@@ -15,7 +13,8 @@ html = """
 
 soup = BeautifulSoup(html, 'html.parser')
 
-# Find all paragraphs and extract text
+# Find all paragraphs and extract text, replacing characters and removing newlines
 paragraphs = soup.find_all('p')
 for p in paragraphs:
-    print(p.get_text())
+    text = p.get_text().replace('=E2=80=94', '(').replace('E28099s', "'").replace('\n', ' ')
+    print(text)
