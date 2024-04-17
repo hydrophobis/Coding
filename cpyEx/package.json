@@ -1,0 +1,25 @@
+{
+    "name": "CPython",
+    "version": "0.0.3",
+    "engines": {
+      "vscode": ">=0.9.0-pre.1"
+    },
+    "publisher": "me",
+    "contributes": {
+      "languages": [
+        {
+          "id": "CPython",
+          "aliases": ["CPY", "cpy"],
+          "extensions": [".cpy", ".CPY"]
+        }
+      ],
+      "grammars": [
+        {
+          "path": "./syntaxes/cpy.tmLanguage.json""language": "cpython",
+          "scopeName": "source.cpy",
+          
+        }
+      ]
+    }
+  }
+  

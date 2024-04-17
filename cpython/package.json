@@ -1,0 +1,25 @@
+{
+  "name": "cpython",
+  "displayName": "CPython",
+  "description": "",
+  "version": "0.0.3",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "cpython",
+      "aliases": ["CPython", "cpython"],
+      "extensions": [".cpy",".cpython"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "cpython",
+      "scopeName": "source.cpy",
+      "path": "./syntaxes/cpython.tmLanguage.json"
+    }]
+  }
+}
