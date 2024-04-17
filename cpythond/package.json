@@ -1,8 +1,9 @@
 {
   "name": "cpython",
   "displayName": "CPython",
+  "icon": "images/cpython.png",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "engines": {
     "vscode": "^1.88.0"
   },
@@ -16,6 +17,13 @@
       "extensions": [".cpy",".cpython"],
       "configuration": "./language-configuration.json"
     }],
+    "iconThemes": [
+      {
+        "id": "vs-seti",
+        "label": "CPython",
+        "path": "./icons.json"
+      }
+    ],
     "grammars": [{
       "language": "cpython",
       "scopeName": "source.cpy",

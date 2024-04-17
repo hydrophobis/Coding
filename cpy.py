@@ -1,6 +1,6 @@
-import ast
 import subprocess
 import sys
+import os
 
 def getContent(filename):
     try:
@@ -15,23 +15,27 @@ def getContent(filename):
 def runFile(filename):
     subprocess.run(["python", filename])
 
+def delFile(file_path):
+    if os.path.exists(file_path):
+        # Delete the file
+        os.remove(file_path)
+
 def write(filename, content):
     try:
         with open(filename, 'w') as file:
             file.write(content)
-        print(f"Content successfully written, running parsed content...\n")
     except Exception as e:
-        print(f"Error writing to '{filename}': {e}")
+        print(f"Error writing")
 
 
 def translate(content):
     content = content.replace('{', ':').replace('}', '').replace(';', '\n')
-    content = content.replace('int main()', 'if __name__ == "__main__"')
+    content = content.replace('def script()', 'if __name__ == "__main__"')
     return content  # Return the translated content
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: cpy <filename>")
+        print("Usage: cpython <filename>")
         sys.exit(1)
 
     filename = sys.argv[1]
@@ -45,3 +49,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    delFile("cpyrunner.py")
+

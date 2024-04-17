@@ -1,0 +1,10 @@
+{
+    "iconDefinitions": {
+      "_file_dark": {
+        "iconPath": "./images/cpython.png"
+      },
+      "fileExtensions": {
+        "cpy": "_cpy_file"
+      }
+    }
+  }

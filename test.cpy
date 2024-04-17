@@ -2,6 +2,10 @@ def main(){
     print("test");
 }
 
-int main(){
-    main();
+def script() {
+    if (True) {
+        main();
+    }
 }
+
+def
