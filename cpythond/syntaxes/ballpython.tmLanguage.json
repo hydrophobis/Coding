@@ -4,43 +4,43 @@
 	"scopeName": "source.bpy",
 	"patterns": [
 		{
-			"name": "keyword.control.cpython",
-			"match": "\\b(if|else|for|while|def|class|int|import)\\b"
+			"name": "keyword.control.ballpython",
+			"match": "\\b(if|else|for|def|class|int|import)\\b"
 		},
 		{
-			"name": "variable.name.cpython",
+			"name": "variable.name.ballpython",
 			"match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
 		},
 		{
-			"name": "string.quoted.double.cpython",
+			"name": "string.quoted.double.ballpython",
 			"begin": "\"",
 			"end": "\"",
 			"patterns": [
 				{
-					"name": "constant.character.escape.cpython",
+					"name": "constant.character.escape.ballpython",
 					"match": "\\\\."
 				}
 			]
 		},
 		{
-			"name": "comment.line.cpython",
-			"begin": "$",
-			"end": "$"
+			"name": "comment.line.ballpython",
+			"begin": "//",
+			"end": "\n"
 		},
 		{
-			"name": "entity.name.function.cpython",
+			"name": "entity.name.function.ballpython",
 			"match": "\\bdef\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b"
 		},
 		{
-			"name": "keyword.operator.cpython",
+			"name": "keyword.operator.ballpython",
 			"match": "\\+|-|\\*|/|%|==|!=|<|>|<=|>=|\\b(and|or|not)\\b"
 		},
 		{
-			"name": "constant.numeric.cpython",
+			"name": "constant.numeric.ballpython",
 			"match": "\\b\\d+\\b"
 		},
 		{
-			"name": "punctuation.separator.cpython",
+			"name": "punctuation.separator.ballpython",
 			"match": "\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\.|\\:|\\;|\\="
 		}
 	]
