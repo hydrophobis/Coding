@@ -1,9 +1,9 @@
 {
-  "name": "cpython",
-  "displayName": "CPython",
+  "name": "ballpython",
+  "displayName": "BallPython",
   "icon": "images/cpython.png",
   "description": "",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "engines": {
     "vscode": "^1.88.0"
   },
@@ -12,22 +12,22 @@
   ],
   "contributes": {
     "languages": [{
-      "id": "cpython",
-      "aliases": ["CPython", "cpython"],
-      "extensions": [".cpy",".cpython"],
+      "id": "ballpython",
+      "aliases": ["BallPython", "ballpython"],
+      "extensions": [".bpy",".bpython"],
       "configuration": "./language-configuration.json"
     }],
     "iconThemes": [
       {
         "id": "vs-seti",
-        "label": "CPython",
+        "label": "BallPython",
         "path": "./icons.json"
       }
     ],
     "grammars": [{
-      "language": "cpython",
+      "language": "ballpython",
       "scopeName": "source.cpy",
-      "path": "./syntaxes/cpython.tmLanguage.json"
+      "path": "./syntaxes/ballpython.tmLanguage.json"
     }]
   }
 }

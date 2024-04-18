@@ -4,7 +4,7 @@
         "iconPath": "./images/cpython.png"
       },
       "fileExtensions": {
-        "cpy": "_cpy_file"
+        "bpy": "_file_dark"
       }
     }
   }

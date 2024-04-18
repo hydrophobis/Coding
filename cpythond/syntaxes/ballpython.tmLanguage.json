@@ -1,0 +1,47 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "BallPython",
+	"scopeName": "source.bpy",
+	"patterns": [
+		{
+			"name": "keyword.control.cpython",
+			"match": "\\b(if|else|for|while|def|class|int|import)\\b"
+		},
+		{
+			"name": "variable.name.cpython",
+			"match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+		},
+		{
+			"name": "string.quoted.double.cpython",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.cpython",
+					"match": "\\\\."
+				}
+			]
+		},
+		{
+			"name": "comment.line.cpython",
+			"begin": "$",
+			"end": "$"
+		},
+		{
+			"name": "entity.name.function.cpython",
+			"match": "\\bdef\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b"
+		},
+		{
+			"name": "keyword.operator.cpython",
+			"match": "\\+|-|\\*|/|%|==|!=|<|>|<=|>=|\\b(and|or|not)\\b"
+		},
+		{
+			"name": "constant.numeric.cpython",
+			"match": "\\b\\d+\\b"
+		},
+		{
+			"name": "punctuation.separator.cpython",
+			"match": "\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\.|\\:|\\;|\\="
+		}
+	]
+}
