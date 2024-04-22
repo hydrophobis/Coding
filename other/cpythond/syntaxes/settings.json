@@ -1,0 +1,15 @@
+{
+    "editor.tokenColorCustomizations": {
+        "[Github Dark Default]": {
+            "variables": "#800080",
+            "operators": "#FF0000",
+            "booleans.ballpython": "#FF0000"
+        },
+        "[*Dark*]": {
+            "variables": "#229977"
+        },
+        "[Abyss][Red]": {
+            "keywords": "#f00"
+        }
+    }
+}
