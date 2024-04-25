@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8FA94C15-36D4-4EA4-A625-9D40E26FD82D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>XenonCheatEngine</RootNamespace>
     <AssemblyName>Xenon</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -85,6 +85,11 @@
     <ManifestKeyFile>scriptkid.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Costura.Fody" Version="4.1.0" />
     <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WMPLib.1.0.0\lib\AxInterop.WMPLib.dll</HintPath>
     </Reference>
@@ -146,153 +151,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Classes\FakeCheat.cs" />
-    <Compile Include="Classes\GameConsoleOld.cs" />
-    <Compile Include="Classes\GameData.cs" />
-    <Compile Include="Classes\Internal\Raw\PlayerInfo.cs" />
-    <Compile Include="Classes\Internal\Raw\RoundResults.cs" />
-    <Compile Include="Classes\Log.cs" />
-    <Compile Include="Classes\Utils\Analytics.cs" />
-    <Compile Include="Classes\Utils\ConsoleReadEventArgs.cs" />
-    <Compile Include="Classes\Utils\LogEntry.cs" />
-    <Compile Include="Classes\Utils\Math\Plane3D.cs" />
-    <Compile Include="Classes\Utils\PlayerLogEntry.cs" />
-    <Compile Include="Classes\Utils\PunishmentLogEntry.cs" />
-    <Compile Include="Classes\Utils\MindControlAction.cs" />
-    <Compile Include="Classes\Utils\Offsets.cs" />
-    <Compile Include="Classes\GoogleDriveUploader.cs" />
-    <Compile Include="Classes\Internal\Entity.cs" />
-    <Compile Include="Classes\Internal\EntityBase.cs" />
-    <Compile Include="Classes\Internal\MatchInfo.cs" />
-    <Compile Include="Classes\Internal\Player.cs" />
-    <Compile Include="Classes\Internal\Raw\GlobalVars.cs" />
-    <Compile Include="Classes\Internal\Raw\matrix3x4_t.cs" />
-    <Compile Include="Classes\Internal\Raw\mstudiobbox_t.cs" />
-    <Compile Include="Classes\Internal\Raw\mstudiobone_t.cs" />
-    <Compile Include="Classes\Internal\Raw\mstudiohitboxset_t.cs" />
-    <Compile Include="Classes\Internal\Raw\studiohdr_t.cs" />
-    <Compile Include="Classes\GameProcess.cs" />
-    <Compile Include="Classes\Map.cs" />
-    <Compile Include="Classes\ReplayMonitor.cs" />
-    <Compile Include="Classes\GameConsole.cs" />
-    <Compile Include="Classes\Utils\Debug.cs" />
-    <Compile Include="Classes\Utils\KeyCodes.cs" />
-    <Compile Include="Classes\Utils\Maps.cs" />
-    <Compile Include="Classes\Utils\Helper.cs" />
-    <Compile Include="Classes\Punishment.cs" />
-    <Compile Include="Classes\TripWire.cs" />
-    <Compile Include="Classes\Utils\Math\GfxMath.cs" />
-    <Compile Include="Classes\Utils\Math\Line3D.cs" />
-    <Compile Include="Classes\Utils\MemoryRead.cs" />
-    <Compile Include="Classes\Utils\Module.cs" />
-    <Compile Include="Classes\Utils\MouseHook.cs" />
-    <Compile Include="Classes\Utils\PlayerConfig.cs" />
-    <Compile Include="Classes\Utils\SendInput.cs" />
-    <Compile Include="Classes\Utils\LogTypes.cs" />
-    <Compile Include="Classes\Utils\ThreadedComponent.cs" />
-    <Compile Include="Classes\Utils\Weapons.cs" />
-    <Compile Include="Classes\Utils\Team.cs" />
-    <Compile Include="Classes\Win32\Data\HardwareInput.cs" />
-    <Compile Include="Classes\Win32\Data\Input.cs" />
-    <Compile Include="Classes\Win32\Data\KeybdInput.cs" />
-    <Compile Include="Classes\Win32\Data\KeyboardEventFlags.cs" />
-    <Compile Include="Classes\Win32\Data\MouseEventFlags.cs" />
-    <Compile Include="Classes\Win32\Data\MouseInput.cs" />
-    <Compile Include="Classes\Win32\Data\Point.cs" />
-    <Compile Include="Classes\Win32\Data\Rect.cs" />
-    <Compile Include="Classes\Win32\Data\SendInputEventType.cs" />
-    <Compile Include="Classes\Win32\Data\WindowsVirtualKey.cs" />
-    <Compile Include="Classes\Win32\Kernel32.cs" />
-    <Compile Include="Classes\Win32\User32.cs" />
-    <Compile Include="Forms\Conditions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Conditions.Designer.cs">
-      <DependentUpon>Conditions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Fake_UI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Fake_UI.Designer.cs">
-      <DependentUpon>Fake_UI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Hidden.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Hidden.Designer.cs">
-      <DependentUpon>Hidden.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Maps\de_vertigo.cs" />
-    <Compile Include="Maps\de_chlorine.cs" />
-    <Compile Include="Maps\de_shortnuke.cs" />
-    <Compile Include="Maps\de_train.cs" />
-    <Compile Include="Maps\de_cache.cs" />
-    <Compile Include="Maps\de_anubis.cs" />
-    <Compile Include="Maps\de_nuke.cs" />
-    <Compile Include="Maps\de_inferno.cs" />
-    <Compile Include="Maps\de_dust2.cs" />
-    <Compile Include="Maps\de_overpass.cs" />
-    <Compile Include="Maps\de_mirage.cs" />
-    <Compile Include="Maps\GenericMap.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Punishments\BigSpender.cs" />
-    <Compile Include="Punishments\RoflCopter.cs" />
-    <Compile Include="Punishments\BloodBrothers.cs" />
-    <Compile Include="Punishments\NadeKing.cs" />
-    <Compile Include="Punishments\ToxicMate.cs" />
-    <Compile Include="Punishments\JumpingJack.cs" />
-    <Compile Include="Punishments\LuckyLuke.cs" />
-    <Compile Include="Punishments\HeavyKnife.cs" />
-    <Compile Include="Punishments\HotPotato.cs" />
-    <Compile Include="Punishments\TripWire\KnockKnockWhosThere.cs" />
-    <Compile Include="Punishments\BurningMan.cs" />
-    <Compile Include="Punishments\TripWire\FakeFlash.cs" />
-    <Compile Include="Punishments\TripWire\MindControl.cs" />
-    <Compile Include="Punishments\MaxRecoil.cs" />
-    <Compile Include="Punishments\TripWire\ButterFingers.cs" />
-    <Compile Include="Punishments\InvertMouseAds.cs" />
-    <Compile Include="Punishments\TripWire\NoCrosshairChallenge.cs" />
-    <Compile Include="Punishments\FlashInYourFace.cs" />
-    <Compile Include="Punishments\NoPlantOrDefuse.cs" />
-    <Compile Include="Punishments\NoSilentWalk.cs" />
-    <Compile Include="Punishments\NoSpray4U.cs" />
-    <Compile Include="Punishments\TripWire\ReverseSpeedhack.cs" />
-    <Compile Include="Punishments\DoYouEvenAimBro.cs" />
-    <Compile Include="Punishments\TripWire\DrunkenMaster.cs" />
-    <Compile Include="Punishments\TripWire\ViolenceSpeedMomentum.cs" />
-    <EmbeddedResource Include="Forms\Conditions.resx">
-      <DependentUpon>Conditions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Fake_UI.resx">
-      <DependentUpon>Fake_UI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Hidden.resx">
-      <DependentUpon>Hidden.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
