@@ -16,7 +16,7 @@ int main(){
 
     Electron e;
     e.linkedObject = qobj;
-    e.SEGMENTATION_FAULT(e);
+    e.INITIALIZE(e);
     e.move(e);
     e.outputElectron(e);
 

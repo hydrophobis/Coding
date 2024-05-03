@@ -210,34 +210,43 @@ public:
     }
 };
 
+class Proton : public QuantumObject {
+    int charge = 1;
+};
+
 class Electron : public QuantumObject {
 public:
     QuantumObject linkedObject;
     long double distance; // Distance from linkedObject
     long double maxDistance = 0.0001; // Farthest possible from linkedObject
-    long double factor = 0.0000000000000000000000000000001;
+    long double factor = 0.0000000000000000000000000001;
+    int charge = -1;
 
-    void SEGMENTATION_FAULT(Electron& e){
+    void INITIALIZE(Electron& e){
         e.position.push_back(0.0);
         e.position.push_back(0.0);
         e.position.push_back(0.0);
     }
 
     void move(Electron& electron) {
-        
-        srand(electron.linkedObject.qrand);
         double randFactor = rand() % 1000 / 1000.0 * factor;  // Random factor scaling
+        std::cout << electron.linkedObject.qrand << std::endl; 
+        std::cout << randFactor << std::endl;
 
         // Calculate new potential positions
-        electron.position[0] += randFactor * (rand() % 2 ? 1 : -1);
-        electron.position[1] += randFactor * (rand() % 2 ? 1 : -1);
-        electron.position[2] += randFactor * (rand() % 2 ? 1 : -1);
+        electron.position[0] += randFactor * (rand());
+        electron.position[1] += randFactor * (rand());
+        electron.position[2] += randFactor * (rand());
+
+        std::cout << electron.position[0] << std::endl;
+        std::cout << electron.position[1] << std::endl;
+        std::cout << electron.position[2] << std::endl;
 
         // Calculate the distance to the linkedObject
         double distance = sqrt(
-            pow(linkedObject.position[0] - position[0], 2) +
-            pow(linkedObject.position[1] - position[1], 2) +
-            pow(linkedObject.position[2] - position[2], 2)
+            pow(electron.linkedObject.position[0] - electron.position[0], 2) +
+            pow(electron.linkedObject.position[1] - electron.position[1], 2) +
+            pow(electron.linkedObject.position[2] - electron.position[2], 2)
         );
 
         // If the new position is too far, revert to previous or scale back
