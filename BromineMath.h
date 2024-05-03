@@ -215,7 +215,7 @@ public:
     QuantumObject linkedObject;
     long double distance; // Distance from linkedObject
     long double maxDistance = 0.0001; // Farthest possible from linkedObject
-    double factor = 2;
+    long double factor = 0.0000000000000000000000000000001;
 
     void SEGMENTATION_FAULT(Electron& e){
         e.position.push_back(0.0);
