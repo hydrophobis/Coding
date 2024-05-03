@@ -5,6 +5,10 @@
 #include <vector> // For vector operations
 #include <cmath> // For math functions
 #include <thread> // For threading and delays
+#include <algorithm>
+#include <ctime>
+#include <random>
+#include <limits>
 
 #define RESET   "\033[0m"   // Resets color to default
 #define RED     "\033[31m"  // Red text
@@ -116,10 +120,10 @@ public:
     }
 
     void output2D() {
-        std::cout << "Position: (" << MAGENTA << position[0] << ", " << position[1] << ")"
-                  << "\nVelocity: (" << MAGENTA << velocity[0] << ", " << velocity[1] << ")"
-                  << "\nGravity: " << MAGENTA << gravity << " | Air Resistance: "
-                  << MAGENTA << (airResistance * -1.0) << "\n\n";
+        std::cout << "Position: ("  << position[0] << ", " << position[1] << ")"
+                  << "\nVelocity: ("  << velocity[0] << ", " << velocity[1] << ")"
+                  << "\nGravity: "  << gravity << " | Air Resistance: "
+                   << (airResistance * -1.0) << "\n\n";
     }
 };
 
@@ -140,12 +144,118 @@ public:
     }
 
     void output3D() {
-        std::cout << "Frame: " << MAGENTA << frame 
-                  << "\nPosition: (" << MAGENTA << position[0] << ", " << MAGENTA << position[1] << ", " << MAGENTA << position[2] << ")"
-                  << "\nVelocity: (" << MAGENTA << velocity[0] << ", " << MAGENTA << velocity[1] << ", " << MAGENTA << velocity[2] << ")"
-                  << "\nGravity: " << MAGENTA << gravity 
-                  << " | Air Resistance: " << MAGENTA << (airResistance * -1.0) << "\n\n";
+        std::cout << "Frame: "  << frame 
+                  << "\nPosition: ("  << position[0] << ", "  << position[1] << ", "  << position[2] << ")"
+                  << "\nVelocity: ("  << velocity[0] << ", "  << velocity[1] << ", "  << velocity[2] << ")"
+                  << "\nGravity: "  << gravity 
+                  << " | Air Resistance: "  << airResistance << "\n\n";
     }
 };
+
+class QuantumObject : public Object3D {
+public:
+    bool entanglementSpin;
+
+    struct QuantumObjectList {
+        std::vector<int> ids;
+        std::vector<bool> spins;
+    };
+
+    QuantumObjectList quantumObjList;
+    int particleId;
+    int entanglementId; 
+    long int qrand;
+    bool spin;
+
+
+    long long int setQRand() {
+        std::random_device rd;
+        long long int qrand = rd();
+
+        if (qrand == 0) {
+            qrand = time(NULL);
+        }
+
+        // Seed with the obtained value
+        srand(qrand);
+
+        std::cout << "Seed for qrand: " << qrand << std::endl;
+
+        // Return the seed value for later use or verification
+        return qrand;
+    }
+
+    void updateState(QuantumObjectList list, bool spin, bool entanglementSpin, int entanglementId){
+        entanglementSpin = list.spins[entanglementId];
+        spin = !entanglementSpin;
+    }
+
+    void frame3DQ(long double step) {
+        frame += step;
+        velocity[1] += gravity * step;
+        velocity[0] += airResistance * step;
+        velocity[2] += airResistance * step;
+
+        position[0] += velocity[0] * step;
+        position[1] += velocity[1] * step;
+        position[2] += velocity[2] * step;
+    }
+
+    void output3DQ() {
+        std::cout << "Frame: "  << frame 
+                  << "\nPosition: ("  << position[0] << ", "  << position[1] << ", "  << position[2] << ")"
+                  << "\nVelocity: ("  << velocity[0] << ", "  << velocity[1] << ", "  << velocity[2] << ")"
+                  << "\nGravity: "  << gravity 
+                  << " | Air Resistance: "  << airResistance << " | Spin: " << spin << " | Entanglement ID: " << entanglementId << " | QRand: " << qrand << "\n\n";
+    }
+};
+
+class Electron : public QuantumObject {
+public:
+    QuantumObject linkedObject;
+    long double distance; // Distance from linkedObject
+    long double maxDistance = 0.0001; // Farthest possible from linkedObject
+    double factor = 2;
+
+    void SEGMENTATION_FAULT(Electron& e){
+        e.position.push_back(0.0);
+        e.position.push_back(0.0);
+        e.position.push_back(0.0);
+    }
+
+    void move(Electron& electron) {
+        
+        srand(electron.linkedObject.qrand);
+        double randFactor = rand() % 1000 / 1000.0 * factor;  // Random factor scaling
+
+        // Calculate new potential positions
+        electron.position[0] += randFactor * (rand() % 2 ? 1 : -1);
+        electron.position[1] += randFactor * (rand() % 2 ? 1 : -1);
+        electron.position[2] += randFactor * (rand() % 2 ? 1 : -1);
+
+        // Calculate the distance to the linkedObject
+        double distance = sqrt(
+            pow(linkedObject.position[0] - position[0], 2) +
+            pow(linkedObject.position[1] - position[1], 2) +
+            pow(linkedObject.position[2] - position[2], 2)
+        );
+
+        // If the new position is too far, revert to previous or scale back
+        if (distance > electron.maxDistance) {
+            // Move only to the maximum allowable distance
+            double scaleBackFactor = electron.maxDistance / distance;
+            electron.position[0] = linkedObject.position[0] + (electron.position[0] - linkedObject.position[0]) * scaleBackFactor;
+            electron.position[1] = linkedObject.position[1] + (electron.position[1] - linkedObject.position[1]) * scaleBackFactor;
+            electron.position[2] = linkedObject.position[2] + (electron.position[2] - linkedObject.position[2]) * scaleBackFactor;
+        }
+    }
+
+    void outputElectron(Electron& e){
+        std::cout << "Position: (" << e.position[0] << ", " << e.position[1] << ", " << e.position[2] << ")" << std::endl;
+        std::cout << "Distance from linked object: " << e.distance << std::endl;
+    }
+};
+
+
 
 #endif // VECTOR_AND_OBJECTS_HPP
