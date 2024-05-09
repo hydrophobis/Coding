@@ -1,0 +1,14 @@
+Make a local python3 server that runs with sensitive data
+
+Make user zenith and disallow permissions to make it harder
+
+In the web server /zenith has a base64 encoded ssh key, make a user for this so they
+can only use ftp to browse the file system, allowing you to find zeniths ssh key
+
+The second more secure file contains a username and password for the root 
+user in the computer system and then begin the actual forensics and recovery
+in the root directory, contained in a bin.dll file that actually contains
+plaintext hexadecimal data
+
+add a second extremely secure file with admin passwords encoded multiple time 
+with hexadecimal and binary
