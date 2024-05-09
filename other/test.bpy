@@ -1,9 +1,12 @@
-def main(){
-    print("test");
+import os
+
+def greet(){
+    name = input("Enter your name: ")
+    print("Hello, " + name + "! Welcome to the BallPython script.")
 }
 
 def script() {
     if (True) {
-        main();
+        greet();
     }
 }

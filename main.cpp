@@ -2,7 +2,7 @@
 
 int main(){
     AUTOLOG;
-    WATCH();
+    WATCH;
 
     return 0;
 }

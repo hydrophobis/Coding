@@ -12,3 +12,5 @@ plaintext hexadecimal data
 
 add a second extremely secure file with admin passwords encoded multiple time 
 with hexadecimal and binary
+
+Make the user have to figure out how to run killps.sh in order to allow ssh via killing mon22

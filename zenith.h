@@ -137,7 +137,7 @@ public:
 #define AUTOLOG Log log(__func__);
 
 // Define a macro to track function calls using the Watch class
-#define WATCH() \
+#define WATCH \
     do { \
         Watch watch; \
         auto result_pair = watch.track([](){return __func__;}); \
