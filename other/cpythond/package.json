@@ -3,8 +3,8 @@
   "displayName": "BallPython",
   "icon": "images/cpython.png",
   "description": "",
-  "publisher": "CamoGekko",
-  "version": "0.1.10",
+  "publisher": "0xhydrogen",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.88.0"
   },
@@ -12,16 +12,24 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "ballpython",
-      "aliases": ["BallPython", "ballpython"],
-      "extensions": [".bpy",".bpython"],
-      "configuration": "./language-configuration.json",
-      "icon": {
-        "light": "./images/bpython.png",
-        "dark": "./images/bpython.png"
+    "languages": [
+      {
+        "id": "ballpython",
+        "aliases": [
+          "BallPython",
+          "ballpython"
+        ],
+        "extensions": [
+          ".bpy",
+          ".bpython"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/bpython.png",
+          "dark": "./images/bpython.png"
+        }
       }
-    }],
+    ],
     "iconThemes": [
       {
         "id": "ballpython",
@@ -29,10 +37,15 @@
         "path": "./icons.json"
       }
     ],
-    "grammars": [{
-      "language": "ballpython",
-      "scopeName": "source.bpy",
-      "path": "./syntaxes/ballpython.tmLanguage.json"
-    }]
+    "grammars": [
+      {
+        "language": "ballpython",
+        "scopeName": "source.bpy",
+        "path": "./syntaxes/ballpython.tmLanguage.json"
+      }
+    ]
+  },
+  "dependencies": {
+    "vsce": "^2.15.0"
   }
 }
