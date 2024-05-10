@@ -1,0 +1,23 @@
+scan ports, port 22 hides itself unless you use random scans
+
+port 8000 is open with a web server on it
+
+the server claims to be under dev but a secret dir(which you can guess because the name of 
+the hacker group is that) contains what you need
+
+you still need a username and password to login as zenith, they are both located in the zenithadmin.dll
+as Matt Burchowski. You only know he is correct because if you downloaded a file named zenith.png
+and analyzed it as a txt it says his name at the bottom (Matt is in zenith.png)
+
+now use Matts password and the zenith username to login to the computer on ftp. 
+
+zenith.dll is now useful because in auth.log a user named bob.jones accessed the computer as root
+so you find his password and use it to log into ssh on his account
+
+the passwd file is vulnerable to modifications do to misconfiguration so you can add a root user
+or
+you can use the tar.sh file that is improperly configured and allows for command injection and
+running commands as root
+
+use your newly aquired root permissions to find the enterprise.hex file, recover it and delete it
+from their system

@@ -13,8 +13,7 @@ def start_target_file():
 def main():
     while True:
         start_target_file()
-        # Adjust the delay time according to your needs
-        time.sleep(2)  # Repeat every 5 seconds
+        time.sleep(0.01)
 
 if __name__ == "__main__":
     main()
