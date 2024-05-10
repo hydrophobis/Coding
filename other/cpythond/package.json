@@ -30,13 +30,6 @@
         }
       }
     ],
-    "iconThemes": [
-      {
-        "id": "ballpython",
-        "label": "BallPython",
-        "path": "./icons.json"
-      }
-    ],
     "grammars": [
       {
         "language": "ballpython",

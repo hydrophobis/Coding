@@ -6,7 +6,7 @@ def greet(){
 }
 
 def script() {
-    if (True) {
-        greet();
-    }
+
+    greet();
+
 }

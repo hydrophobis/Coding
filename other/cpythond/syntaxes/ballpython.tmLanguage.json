@@ -5,7 +5,7 @@
 	"patterns": [
 		{
 			"name": "keyword.control.ballpython",
-			"match": "\\b(if|else|for|def|class|int|import)\\b"
+			"match": "\\b(if|else|for|def|class|int|import|script|await|pass|None|break|except|in|raise|finally|is|return|and|continue|lambda|try|as|from|nonlocal|while|assert|del|global|not|with|async|elif|if|or|yield)\\b"
 		},
 		{
 			"name": "variable.name.ballpython",
