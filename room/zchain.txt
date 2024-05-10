@@ -19,5 +19,5 @@ or
 you can use the tar.sh file that is improperly configured and allows for command injection and
 running commands as root
 
-use your newly aquired root permissions to find the enterprise.hex file, recover it and delete it
+use your newly aquired root permissions to find the enterprise.dll file, recover it and delete it
 from their system
