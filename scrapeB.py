@@ -65,7 +65,7 @@ def scrape_files(url, output_file, max_files=1000, char_limit=10000):
         scrape_recursive(url)
 
 # URL to start scraping from
-start_url = 'https://ebay.com/'
+start_url = 'https://fuzzy-bassoon-v6vw6747g77wfw646-8000.app.github.dev/room/'
 
 # Output file to store the content snippets
 output_file = 'scraped_content.txt'

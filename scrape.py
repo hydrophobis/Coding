@@ -2,12 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import re
+import time
 
 # Custom headers to mimic browser behavior
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'User-Agent': 'Mozilla/12.3 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Accept-Language': 'en-US,en;q=0.5',
-    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Encoding': 'gzip, deflate, br, zip',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Connection': 'keep-alive'
 }
@@ -17,11 +18,11 @@ def is_valid_url(url):
     return url.startswith("http")
 
 # Function to remove common navigation elements
-def remove_unwanted_elements(soup):
-    # Remove common navigation sections
-    for tag in ['nav', 'header', 'footer', 'aside']:
-        for element in soup.find_all(tag):
-            element.decompose()
+#def remove_unwanted_elements(soup):
+#    # Remove common navigation sections
+#    for tag in ['nav', 'header', 'footer', 'aside']:
+#        for element in soup.find_all(tag):
+#            element.decompose()
 
     # Remove specific elements based on class or id
     for class_name in ['navbar', 'footer', 'sidebar', 'header']:
@@ -38,7 +39,7 @@ def clean_text(text):
     return text.strip()
 
 # Function to scrape file contents from a URL
-def scrape_files(url, output_file, max_files=100000, char_limit=10000):
+def scrape_files(url, output_file, max_files=100000, char_limit=10000, allow_redirects=True):
     files_scraped = 0
     visited = set()
     already_scraped = set()
@@ -54,12 +55,12 @@ def scrape_files(url, output_file, max_files=100000, char_limit=10000):
             visited.add(url)
 
             try:
-                response = requests.get(url, headers=headers)
+                response = requests.get(url, headers=headers, allow_redirects=allow_redirects)
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, 'html.parser')
 
                     # Remove unwanted elements
-                    remove_unwanted_elements(soup)
+                    #remove_unwanted_elements(soup)
 
                     # Get all text and clean it
                     plain_text = clean_text(soup.get_text())
@@ -91,9 +92,12 @@ def scrape_files(url, output_file, max_files=100000, char_limit=10000):
         scrape_recursive(url)
 
 # URL to start scraping from
-start_url = 'https://www.sec.gov'
+start_url = 'https://www.sec.gov/Archives/edgar/data/'
 
 # Output file to store the content snippets
 output_file = 'scraped_content.txt'
 
-scrape_files(start_url, output_file, max_files=100000, char_limit=10000)
+# Set allow_redirects to True to follow redirects, False to ignore them
+allow_redirects = False
+
+scrape_files(start_url, output_file, max_files=100000, char_limit=100000, allow_redirects=allow_redirects)
