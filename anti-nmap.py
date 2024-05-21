@@ -2,12 +2,9 @@ import subprocess
 import time
 from datetime import datetime
 
-# Whenever this script detects a ping to port 21 it will close port 22 for a few seconds making it appear invisible to the scanner
-
 # Paths to necessary commands and files
 IPTABLES = "/sbin/iptables"
 FTP_LOG = "/var/log/ftp_monitor.log"
-BLOCK_SCRIPT = "block22.sh"
 
 def log_ftp_connection():
     # Log the detected FTP connection
@@ -15,8 +12,13 @@ def log_ftp_connection():
         log_file.write(f"{datetime.now()}: FTP connection detected\n")
 
 def block_port_22():
-    # Execute the block script
-    subprocess.run(["bash", BLOCK_SCRIPT])
+    # Block port 22
+    subprocess.run([IPTABLES, "-A", "INPUT", "-p", "tcp", "--dport", "22", "-j", "DROP"])
+    print("Port 22 blocked.")
+    time.sleep(10)  # Block for 10 seconds (adjust as needed)
+    # Unblock port 22
+    subprocess.run([IPTABLES, "-D", "INPUT", "-p", "tcp", "--dport", "22", "-j", "DROP"])
+    print("Port 22 unblocked.")
 
 def monitor_ftp_connections():
     # Run tcpdump to monitor port 21 connections
