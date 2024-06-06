@@ -1,12 +1,39 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <ncurses.h>
-#include "items.hpp"
+
+#include "def.hpp"
+#include "inc.hpp"
 
 using namespace std;
+
+Game newGame(string name){
+    Game game;
+
+    game.playerHealth = 10;
+    game.playerDamage = 3;
+    game.playerLevel = 1;
+    game.playerName = name;
+
+    return game;
+}
+
+Game loadGame(){
+    Game game
+    // vector<vector<char>>
+    char** data = readFile("hadean_terminal.save", 4);
+    
+    game.playerHealth = base64_decode(data[0]);
+    game.playerDamage = base64_decode(data[1]);
+    game.playerLevel = base64_decode(data[2]);
+    game.playerName = base64_decode(data[3]);
+
+    return game;
+}
 
 // Uses player level to return an enemy
 Entity genEnemy(int lvl){
@@ -63,7 +90,7 @@ int fight(Player player) {
     bool working = true;
 
     // Create enemies
-    int numEnemies = rand() % 3; // Determine the number of enemies
+    int numEnemies = rand() % 5; // Determine the number of enemies
     for (int i = 0; i < numEnemies; ++i) {
         Entity enemy = genEnemy(player.level);
         enemies.push_back(enemy);
@@ -91,6 +118,10 @@ int fight(Player player) {
     }
 
     return 0;
+}
+
+string outputStats(int health, int damage, int level, string name){
+    cout << RESET << name << "'s stats:\n" << "Health: " << health << "\nLevel: " << level << "\nDamage: " << damage;
 }
 
 
@@ -124,7 +155,7 @@ string explore(){
     }
 };
 
-// No idea what this does
+
 vector<int> inventoryB(vector<int> inv){
     int i = -1;
     vector<int> list;
@@ -138,66 +169,49 @@ vector<int> inventoryB(vector<int> inv){
     return list;
 }
 
+void outputInv(const vector<string>& inventory) {
+    for (size_t counter = 0; counter < inventory.size(); ++counter) {
+        cout << counter + 1 << ": " << lookup(inventory[counter]).name << endl;
+    }
+}
+
 int main(){
+    Game game;
 
     system("clear");
+    int option;
+    cout << INTRO_1 << INTRO_2 << "\n" << MENU_MAIN;
+    cin >> option;
+    switch(option){
+        case 1:
+            game = loadGame();
+        case 2:
+            string name;
+            cout << endl << "Player Name: ";
+            cin >> name;
+            game = newGame(name);
+        case 3:
+            return 0;
+    }
 
     srand(time(0));
 
-    Player player;
-    vector<int> inventory = player.inventory;
-    int action;
-    int ch;
-    string exploreS;
-    int input;
 
-    inventory.push_back(generateItem(player));
 
-    cout << "You've entered the dungeon\n";
+
     while(true){
-        cout << "Select an action:\n" << "1. Explore\n" << "2. Use an item\nAction: ";
-        cin >> input;
-        
+        outputStats();
+        ENDL; ENDL;
+        cout << MENU_ACTION;
+        cin >> option;
 
-        switch (input) {
-            case 1:{
-
-                string e = explore();
-                if(e == "chest"){
-                    int itemId = generateItem(player); 
-                    Item item = lookup(itemId); // Retrieve Item from ID
-                    std::cout << "You found a " << item.name << " in a chest!" << std::endl;
-                    break;     
-                } else if (e == "nothing"){
-                    cout << "Nothing here...\n";
-                }else if (e == "enemy"){
-                    fight(player);
-                }
-                break;
-                
-
-            }
-            case 2:{
-
-                system("clear");
-                int i = 0;
-                while(i < inventory.size()){
-                    i++;
-                    cout << i << ". " << lookup(inventory[i]).name << "\n";
-                }
-                cout << "Use item number: ";
-                cin >> input;
-                useItem(lookup(inventory[input]).id, player);
-                system("clear");
-                
-                break;
-            }
-
-            default:{
-                cout << "Invalid input\n";
-                break;
-            }
+        switch(option){
+            case 1:
+                explore();
+            case 2:
+                outputInv();
+            case 3:
+                cout
         }
     }
-    return 0;
 }
