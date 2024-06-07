@@ -1,4 +1,5 @@
-- Make shields and swords equipable
+- Add % damage addition for player level to weapons
+- add effects
 - Colorify stuff
 - Add armor
 - Too much weight makes you deal less damage

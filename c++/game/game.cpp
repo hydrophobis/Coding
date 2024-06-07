@@ -7,9 +7,13 @@
 #include <ncurses.h>
 #include <algorithm>
 #include <iterator>
+#include <limits> // For std::numeric_limits
+#include <thread> // For std::this_thread::sleep_for
+#include <chrono> // For std::chrono::seconds
 
 #include "def.hpp"
 #include "inc.hpp"
+#include "items.hpp"
 
 using namespace std;
 
@@ -57,7 +61,7 @@ Entity genEnemy(int lvl) {
             break;
     }
 
-    health = health * multi;
+    health = (health + 1) * multi;
     damage = damage * multi;
     
     Entity entity = {enemyName, health, damage, enemyLvl};
@@ -65,8 +69,15 @@ Entity genEnemy(int lvl) {
 }
 
 int generateItem(Player player) {
-    int id = rand() % TOTAL_ITEMS + 1;
+    int id = rand() % TOTAL_ITEMS;
     return id;
+}
+
+
+void outputStats(Player& player) {
+    int damage = player.damage + player.sword.damage;
+    int defense = player.shield.block;
+    cout << player.name << "'s stats:\n" << "\nLevel: " << YELLOW << to_string(player.level) << RESET << "\nExperience: " << CYAN << to_string(player.exp) << RESET << "\nHealth: " << RED << to_string(player.health) << RESET << "\nDamage: " << MAGENTA << to_string(damage) << RESET << "\nDefense: " << BLUE << to_string(player.shield.block) << RESET << "\nSword: " << GREEN << player.sword.name << RESET << "\nShield: " << GREEN << player.shield.name << RESET << endl;
 }
 
 int fight(Player& player) {
@@ -91,12 +102,25 @@ int fight(Player& player) {
 
         if(expCalc == false){
             for (int i = 0; i < enemies.size(); ++i) {
-                exp = (enemies[i].level / 5.0);
+                exp = (enemies[i].level / ((rand() % 4) + 1.0));
             }
         }
 
         for (int i = 0; i < enemies.size(); ++i) {
-            cout << "A " << enemies[i].name << " has appeared!\n1. Block\n2. Attack";
+            cout << "A " << enemies[i].name << " has appeared!\n" << RED << enemies[i].health << "HP" << RESET << " | " << MAGENTA << enemies[i].damage << "DMG" << RESET << " | " << YELLOW << enemies[i].level << "LVL\n" << RESET << "1. Block\n2. Attack\n";
+                        // Check if enemy is alive before attacking
+            if (enemies[i].health > 0) {
+                // Enemy attacks the player
+                int enemyDamage = enemies[i].damage;
+                if (!((enemyDamage - player.shield.block) < 0)){
+                    player.health -= (enemyDamage - player.shield.block);
+                }
+                cout << "The " << enemies[i].name << " attacks you for " << enemyDamage << " damage!\n\n\n";
+
+                outputStats(player);
+                ENDL
+
+            }
             cin >> input;
 
             switch(input){
@@ -118,32 +142,26 @@ int fight(Player& player) {
                     break;
                 }
             }
-
-            // Check if enemy is alive before attacking
-            if (enemies[i].health > 0) {
-                // Enemy attacks the player
-                int enemyDamage = enemies[i].damage;
-                player.health -= enemyDamage;
-                cout << "The " << enemies[i].name << " attacks you for " << enemyDamage << " damage!\n";
-            }
+            //this_thread::sleep_for(chrono::seconds(3));
+            system("clear");
 
             if (enemies[i].health < 1 ){
                 enemies.erase(enemies.begin() + i);
             }
         }
-        system("clear");
+
+        if (player.health <= 0){
+            system("clear");
+            cout << GAME_OVER << "You lost all your health and were sent back to Tartarus" << endl;
+            return 0;
+        }
     }
 
     player.inventory.push_back(generateItem(player));
     player.exp += exp;
 
+    system("clear");
     return 0;
-}
-
-
-
-void outputStats(int health, int damage, int level, string name, double exp) {
-    cout << name << "'s stats:\n" << "\nLevel: " << YELLOW << to_string(level) << RESET << "\nExperience: " << CYAN << to_string(exp) << RESET << "\nHealth: " << RED << to_string(health) << RESET << "\nDamage: " << MAGENTA << to_string(damage) << RESET;
 }
 
 string explore() {
@@ -153,9 +171,9 @@ string explore() {
         case 0:
             return "chest";
         case 1:
-            return "nothing";
-        case 2:
             return "enemy";
+        case 2:
+            return "chest";
         case 3:
             return "trap";
         case 4:
@@ -175,7 +193,56 @@ vector<int> inventoryB(vector<int> inv) {
 
 void outputInv(const vector<int>& inventory) {
     for (size_t counter = 0; counter < inventory.size(); ++counter) {
-        cout << counter + 1 << ": " << lookup(inventory[counter]).name << endl;
+        cout << counter + 1 << ": " << items[inventory[counter]].name << endl;
+    }
+}
+
+// Function to check if the choice is valid (within the inventory range)
+bool isValidChoice(int choice, size_t inventorySize) {
+    return choice >= 0 && choice < inventorySize;
+}
+
+// Function to use food items
+bool useFood(Item& item, Player& player) {
+    if (Food* food = dynamic_cast<Food*>(&item)) {
+        player.health += food->healAmount;
+        return true; // Food item used
+    }
+    return false; // Not a food item
+}
+
+// Function to use equipment items (sword, shield, armor)
+bool useEquipment(Item& item, Player& player) {
+    if (item.damage > 0) {
+        player.sword = item;
+        return true; // Sword equipped
+    } else if (item.block > 0) {
+        if (item.name.find("Armor") != std::string::npos) {
+            player.armor = item;
+        } else {
+            player.shield = item;
+        }
+        return true; // Armor or shield equipped
+    }
+    return false; // Not an equipment item
+}
+
+// Function to handle selecting and using items from the inventory
+void useSelectedItem(int choice, Player& player, std::vector<Item>& items) {
+    if (isValidChoice(choice, player.inventory.size())) {
+        Item& selectedItem = items[player.inventory[choice]];
+
+        if (useFood(selectedItem, player)) {
+            // Food item used
+            player.inventory.erase(player.inventory.begin() + choice);
+        } else if (useEquipment(selectedItem, player)) {
+            // Equipment item used (sword, shield, armor)
+            player.inventory.erase(player.inventory.begin() + choice);
+        } else {
+            std::cout << "\nInvalid Item" << std::endl;
+        }
+    } else {
+        std::cout << "Invalid choice" << std::endl;
     }
 }
 
@@ -218,6 +285,7 @@ int main() {
     player.inventory = game.playerInv;
     player.sword = game.playerSword;
     player.shield = game.playerShield;
+    player.exp = 0;
 
     while (true) {
         string explorationResult;
@@ -229,7 +297,10 @@ int main() {
             return 0;
         }
 
-        outputStats(player.health, player.damage, player.level, player.name, player.exp);
+        player.levelUp(player);
+        initializeItems();
+
+        outputStats(player);
         cout << "\n\n" << MENU_ACTION;
         cin >> option;
 
@@ -252,41 +323,32 @@ int main() {
 
                 choice--;
 
-                // Check if the selected item is within the inventory range
-                if (choice >= 0 && choice < player.inventory.size()) {
-                    // Retrieve the item from the inventory using lookup
-                    Item selectedItem = lookup(player.inventory[choice]);
-                    
-                    // Check if the item is a Food type
-                    if (Food* food = dynamic_cast<Food*>(&selectedItem)) {
-                        player.health += food->healAmount;
-                        player.inventory.erase(player.inventory.begin() + choice);
-                    } else {
-                        if (selectedItem.damage > 0){
-                            player.sword = selectedItem;
-                            player.inventory.erase(player.inventory.begin() + choice);
-                        } else {
-                            if (selectedItem.block > 0){
-                                player.shield = selectedItem;
-                                player.inventory.erase(player.inventory.begin() + choice);
-                            } else {
-                                cout << "\nInvalid Item";
-                            }
-                    }
-                } else {
-                    cout << "Invalid choice\n";
-                }
+                useSelectedItem(choice, player, itemVector);
+                system("clear");
                 break;
             }
             default:
                 cout << "Invalid option.\n";
                 break;
         }
+        
 
         if (explorationResult == "chest") {
-            generateItem(player);
+            int gendItem = generateItem(player);
+            player.inventory.push_back(gendItem);
+            cout << "You found a chest! It contains a " << GREEN << items[gendItem].name << RESET << endl;
+            cin.ignore();
         } else if (explorationResult == "enemy"){
             fight(player);
+        } else if (explorationResult == "trap"){
+            system("clear");
+            int damage = (rand() % 10) * (player.health / 10);
+            cout << "Oh no there was a trap!\nYou took " << RED << damage << RESET << " damage\n";
+            player.health -= damage;
+            cin.ignore();
+        } else if (explorationResult == "nothing"){
+            cout << "Nothing happened and you continue on your journey.\n";
+            cin.ignore();
         }
     }
 
