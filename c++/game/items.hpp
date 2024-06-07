@@ -2,7 +2,7 @@
 
 #define TOTAL_ITEMS 11
 
-// Given an item ID will return the corresponding item
+// Given an item ID will return the corresponding item s
 Item lookup(int id) {
     switch (id) {
         case 0: {
