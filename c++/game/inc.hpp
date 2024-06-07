@@ -210,137 +210,54 @@ struct Game {
 class FileManager {
 public:
 
-    static inline bool is_base64(unsigned char c) {
-        return (isalnum(c) || (c == '+') || (c == '/'));
+    void saveGameData(const Game& game, const std::string& filename) {
+        std::ofstream file(filename, std::ios::binary);
+
+        // Serialize player
+        size_t nameSize = game.player.name.size();
+        file.write(reinterpret_cast<const char*>(&nameSize), sizeof(nameSize));
+        file.write(game.player.name.c_str(), nameSize);
+        file.write(reinterpret_cast<const char*>(&game.player.health), sizeof(game.player.health));
+        file.write(reinterpret_cast<const char*>(&game.player.damage), sizeof(game.player.damage));
+        file.write(reinterpret_cast<const char*>(&game.player.level), sizeof(game.player.level));
+        file.write(reinterpret_cast<const char*>(&game.player.blocked), sizeof(game.player.blocked));
+    
+        // Serialize player inventory
+        size_t invSize = game.player.inventory.size();
+        file.write(reinterpret_cast<const char*>(&invSize), sizeof(invSize));
+        file.write(reinterpret_cast<const char*>(game.player.inventory.data()), invSize * sizeof(int));
+    
+        // Serialize items
+        nameSize = game.player.sword.name.size();
+        file.write(reinterpret_cast<const char*>(&nameSize), sizeof(nameSize));
+        file.write(game.player.sword.name.c_str(), nameSize);
+        file.write(reinterpret_cast<const char*>(&game.player.sword.id), sizeof(game.player.sword.id));
+        file.write(reinterpret_cast<const char*>(&game.player.sword.damage), sizeof(game.player.sword.damage));
+        file.write(reinterpret_cast<const char*>(&game.player.sword.block), sizeof(game.player.sword.block));
+        file.write(reinterpret_cast<const char*>(&game.player.sword.weight), sizeof(game.player.sword.weight));
+    
+        nameSize = game.player.shield.name.size();
+        file.write(reinterpret_cast<const char*>(&nameSize), sizeof(nameSize));
+        file.write(game.player.shield.name.c_str(), nameSize);
+        file.write(reinterpret_cast<const char*>(&game.player.shield.id), sizeof(game.player.shield.id));
+        file.write(reinterpret_cast<const char*>(&game.player.shield.damage), sizeof(game.player.shield.damage));
+        file.write(reinterpret_cast<const char*>(&game.player.shield.block), sizeof(game.player.shield.block));
+        file.write(reinterpret_cast<const char*>(&game.player.shield.weight), sizeof(game.player.shield.weight));
+    
+        // Serialize player experience
+        file.write(reinterpret_cast<const char*>(&game.player.exp), sizeof(game.player.exp));
+    
+        // Serialize game attributes
+        file.write(reinterpret_cast<const char*>(&game.playerHealth), sizeof(game.playerHealth));
+        file.write(reinterpret_cast<const char*>(&game.playerDamage), sizeof(game.playerDamage));
+        file.write(reinterpret_cast<const char*>(&game.playerLevel), sizeof(game.playerLevel));
+    
+        // Serialize player name
+        nameSize = game.playerName.size();
+        file.write(reinterpret_cast<const char*>(&nameSize), sizeof(nameSize));
+        file.write(game.playerName.c_str(), nameSize);
     }
-
-    string base64_decode(const string &encoded_string) {
-
-        int in_len = encoded_string.size();
-        int i = 0;
-        int j = 0;
-        int in_ = 0;
-        unsigned char char_array_4[4], char_array_3[3];
-        string ret;
-
-        while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
-            char_array_4[i++] = encoded_string[in_]; in_++;
-            if (i == 4) {
-                for (i = 0; i < 4; i++)
-                    char_array_4[i] = base64_chars.find(char_array_4[i]);
-
-                char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
-                char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
-                char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
-
-                for (i = 0; (i < 3); i++)
-                    ret += char_array_3[i];
-                i = 0;
-            }
-        }
-
-        if (i) {
-            for (j = i; j < 4; j++)
-                char_array_4[j] = 0;
-
-            for (j = 0; j < 4; j++)
-                char_array_4[j] = base64_chars.find(char_array_4[j]);
-
-            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
-            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
-            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
-
-            for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
-        }
-
-        return ret;
-    }
-    string base64_encode(const string &input) {
-
-        string encoded_string;
-        int in_len = input.size();
-        int i = 0;
-        int j = 0;
-        unsigned char char_array_3[3];
-        unsigned char char_array_4[4];
-
-        while (in_len--) {
-            char_array_3[i++] = input[j++];
-            if (i == 3) {
-                char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-                char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-                char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-                char_array_4[3] = char_array_3[2] & 0x3f;
-
-                for (i = 0; (i < 4); i++)
-                    encoded_string += base64_chars[char_array_4[i]];
-                i = 0;
-            }
-        }
-
-        if (i) {
-            for (j = i; j < 3; j++)
-                char_array_3[j] = '\0';
-
-            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-
-            for (j = 0; (j < i + 1); j++)
-                encoded_string += base64_chars[char_array_4[j]];
-
-            while ((i++ < 3))
-                encoded_string += '=';
-        }
-
-        return encoded_string;
-    }
-
-    void wipeFile(const string &fileName) {
-        ofstream outputFile(fileName, ios::trunc);
-        if (!outputFile) {
-            throw runtime_error("Unable to open file");
-        }
-        // Opening the file in truncate mode clears its contents
-    }
-
-    void writeFile(const string &fileName, const string &content) {
-        ofstream outputFile(fileName);
-        if (!outputFile) {
-            throw runtime_error("Unable to open file");
-        }
-        outputFile << content;
-    }
-
-    char** readFile(const string &fileName, int &lineCount) {
-        ifstream inputFile(fileName);
-        if (!inputFile) {
-            throw runtime_error("Unable to open file");
-        }
-
-        vector<string> lines;
-        string line;
-        while (getline(inputFile, line)) {
-            lines.push_back(line);
-        }
-
-        lineCount = lines.size();
-        char** result = new char*[lineCount];
-
-        for (int i = 0; i < lineCount; ++i) {
-            result[i] = new char[lines[i].length() + 1];
-            strcpy(result[i], lines[i].c_str());
-        }
-
-        return result;
-    }
-
-    void freeCharArray(char** arr, int lineCount) {
-        for (int i = 0; i < lineCount; ++i) {
-            delete[] arr[i];
-        }
-        delete[] arr;
-    }
+    
 };
 
 #define TOTAL_ITEMS 11
