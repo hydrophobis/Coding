@@ -207,7 +207,9 @@ int main() {
             return 1;
     }
 
-    srand(time(0));
+    time_t randomSeed = time(0);
+    srand(randomSeed);
+    
 
     player.health = game.playerHealth;
     player.damage = game.playerDamage;
