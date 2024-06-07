@@ -256,8 +256,18 @@ int main() {
                     // Check if the item is a Food type
                     if (Food* food = dynamic_cast<Food*>(&selectedItem)) {
                         player.health += food->healAmount;
+                        player.inventory.erase(player.inventory.begin() + choice);
                     } else {
-                        cout << "That item isn't usable\n";
+                        if (selectedItem.damage > 0){
+                            player.sword = selectedItem;
+                            player.inventory.erase(player.inventory.begin() + choice);
+                        } else {
+                            if (selectedItem.block > 0){
+                                player.shield = selectedItem;
+                                player.inventory.erase(player.inventory.begin() + choice);
+                            } else {
+                                cout << "\nInvalid Item";
+                            }
                     }
                 } else {
                     cout << "Invalid choice\n";
