@@ -214,6 +214,8 @@ int main() {
     player.level = game.playerLevel;
     player.name = game.playerName;
     player.inventory = game.playerInv;
+    player.sword = game.playerSword;
+    player.shield = game.playerShield;
 
     while (true) {
         string explorationResult;
