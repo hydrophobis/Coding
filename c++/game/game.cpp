@@ -30,7 +30,7 @@ Entity genEnemy(int lvl) {
     string enemyName;
     int enemyLvl = rand() % lvl + (lvl * 1.5); 
     int health = enemyLvl * (rand() % 10);
-    int damage = enemyLvl * ((rand() % 10) * 0.35);
+    int damage = enemyLvl * ((rand() % 10) * 0.2);
     double multi;
 
     int name = rand() % 4;
