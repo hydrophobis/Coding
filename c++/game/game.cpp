@@ -6,10 +6,10 @@
 #include <ctime>
 #include <ncurses.h>
 #include <algorithm>
+#include <iterator>
 
 #include "def.hpp"
 #include "inc.hpp"
-#include "items.hpp"
 
 using namespace std;
 
@@ -26,33 +26,11 @@ Game newGame(string name) {
 
 char** readFile(const std::string& fileName, int& lineCount);
 
-Game loadGame() {
-    Game game;
-    int lineCount;
-    char** data = readFile("hadean_terminal.save", lineCount);
-
-    game.playerHealth = stoi(base64_decode(data[0]));
-    game.playerDamage = stoi(base64_decode(data[1]));
-    game.playerLevel = stoi(base64_decode(data[2]));
-    game.playerName = base64_decode(data[3]);
-    // Assuming playerInv is a vector of strings
-    string inv = base64_decode(data[4]);
-    istringstream iss(inv);
-    vector<int> playerInv((istream_iterator<int>(iss)), istream_iterator<int>());
-    game.playerInv = playerInv;
-
-    for (int i = 0; i < lineCount; ++i) {
-        delete[] data[i];
-    }
-    delete[] data;
-
-    return game;
-}
-
 Entity genEnemy(int lvl) {
     string enemyName;
     int enemyLvl = rand() % lvl + (lvl * 1.5); 
     int health = enemyLvl * (rand() % 10);
+    int damage = enemyLvl * ((rand() % 10) * 0.35);
     double multi;
 
     int name = rand() % 4;
@@ -80,64 +58,92 @@ Entity genEnemy(int lvl) {
     }
 
     health = health * multi;
+    damage = damage * multi;
+    
     Entity entity = {enemyName, health, damage, enemyLvl};
     return entity;
 }
 
-int fight(Player player) {
+int generateItem(Player player) {
+    int id = rand() % TOTAL_ITEMS + 1;
+    return id;
+}
+
+int fight(Player& player) {
     int hp = player.health;
     int damage = player.damage + player.sword.damage;
     vector<int> inv = player.inventory;
     int input;
     vector<Entity> enemies;
-    bool working = true;
+    bool expCalc = false;
     bool blocking = false;
+    double exp;
 
-    int numEnemies = rand() % 5 + 1; // Ensure at least one enemy
+    int numEnemies = rand() % 1 + 1; // Ensure at least one enemy
     for (int i = 0; i < numEnemies; ++i) {
         Entity enemy = genEnemy(player.level);
         enemies.push_back(enemy);
     }
 
     system("clear");
-    for (int i = 0; i < enemies.size(); ++i) {
-        cout << "A " << enemies[i].name << " has appeared!\n1. Block\n2. Attack";
-        cin >> input;
+    
+    while (!enemies.empty()) {
 
-        switch(input){
-            case 1: {
-                enemies[i].blocked = true;
-                break;
-            }
-            case 2: {
-                // Miss calculation
-                if((rand() % 9) - player.sword.weight - player.shield.weight > 0){
-
-                    enemies[i].health -= damage + player.sword.damage;
-                } else {cout << "\nYou missed!\n"}
-                break;
-            }
-            default: {
-                cout << "Invalid choice" << endl;
-                break;
+        if(expCalc == false){
+            for (int i = 0; i < enemies.size(); ++i) {
+                exp = (enemies[i].level / 5.0);
             }
         }
 
-        if (enemies[i].health < 1 ){
-            enemies.erase(enemies.begin() + i)
+        for (int i = 0; i < enemies.size(); ++i) {
+            cout << "A " << enemies[i].name << " has appeared!\n1. Block\n2. Attack";
+            cin >> input;
+
+            switch(input){
+                case 1: {
+                    enemies[i].blocked = true;
+                    break;
+                }
+                case 2: {
+                    // Miss calculation
+                    if((rand() % 9) - player.sword.weight - player.shield.weight > 0){
+                        enemies[i].health -= damage + player.sword.damage;
+                    } else {
+                        cout << "\nYou missed!\n";
+                    }
+                    break;
+                }
+                default: {
+                    cout << "Invalid choice" << endl;
+                    break;
+                }
+            }
+
+            // Check if enemy is alive before attacking
+            if (enemies[i].health > 0) {
+                // Enemy attacks the player
+                int enemyDamage = enemies[i].damage;
+                player.health -= enemyDamage;
+                cout << "The " << enemies[i].name << " attacks you for " << enemyDamage << " damage!\n";
+            }
+
+            if (enemies[i].health < 1 ){
+                enemies.erase(enemies.begin() + i);
+            }
         }
+        system("clear");
     }
+
+    player.inventory.push_back(generateItem(player));
+    player.exp += exp;
 
     return 0;
 }
 
-string outputStats(int health, int damage, int level, string name) {
-    return name + "'s stats:\n" + "Health: " + to_string(health) + "\nLevel: " + to_string(level) + "\nDamage: " + to_string(damage);
-}
 
-int generateItem(Player player) {
-    int id = rand() % TOTAL_ITEMS;
-    return id;
+
+void outputStats(int health, int damage, int level, string name, double exp) {
+    cout << name << "'s stats:\n" << "\nLevel: " << YELLOW << to_string(level) << RESET << "\nExperience: " << CYAN << to_string(exp) << RESET << "\nHealth: " << RED << to_string(health) << RESET << "\nDamage: " << MAGENTA << to_string(damage) << RESET;
 }
 
 string explore() {
@@ -167,15 +173,17 @@ vector<int> inventoryB(vector<int> inv) {
     return list;
 }
 
-void outputInv(const vector<Item*>& inventory) {
+void outputInv(const vector<int>& inventory) {
     for (size_t counter = 0; counter < inventory.size(); ++counter) {
-        cout << counter + 1 << ": " << inventory[counter]->name << endl;
+        cout << counter + 1 << ": " << lookup(inventory[counter]).name << endl;
     }
 }
+
 
 int main() {
     Game game;
     Player player;
+    bool gameOver = false;
 
     system("clear");
     int option;
@@ -183,12 +191,12 @@ int main() {
     cin >> option;
     switch (option) {
         case 1:
-            game = loadGame();
             break;
         case 2: {
             string name;
             cout << endl << "Player Name: ";
             cin >> name;
+            system("clear");
             game = newGame(name);
             break;
         }
@@ -208,7 +216,16 @@ int main() {
     player.inventory = game.playerInv;
 
     while (true) {
-        cout << outputStats(player.health, player.damage, player.level, player.name);
+        string explorationResult;
+
+        if (player.health <= 0){
+            system("clear");
+            gameOver = true;
+            cout << GAME_OVER << "You lost all your health and were sent back to Tartarus" << endl;
+            return 0;
+        }
+
+        outputStats(player.health, player.damage, player.level, player.name, player.exp);
         cout << "\n\n" << MENU_ACTION;
         cin >> option;
 
@@ -216,8 +233,7 @@ int main() {
 
         switch (option) {
             case 1: {
-                string explorationResult = explore();
-                // Handle exploration result
+                explorationResult = explore();
                 break;
             }
             case 2:
@@ -232,11 +248,14 @@ int main() {
 
                 choice--;
 
-                // Check if the selected item is consumable
+                // Check if the selected item is within the inventory range
                 if (choice >= 0 && choice < player.inventory.size()) {
-                    Item* selectedItem = lookup(player.inventory[choice]);
-                    if (Food* food = dynamic_cast<Food*>(selectedItem)) {
-                        player.health += food->nutrition;
+                    // Retrieve the item from the inventory using lookup
+                    Item selectedItem = lookup(player.inventory[choice]);
+                    
+                    // Check if the item is a Food type
+                    if (Food* food = dynamic_cast<Food*>(&selectedItem)) {
+                        player.health += food->healAmount;
                     } else {
                         cout << "That item isn't usable\n";
                     }
@@ -253,7 +272,9 @@ int main() {
         if (explorationResult == "chest") {
             generateItem(player);
         } else if (explorationResult == "enemy"){
-            fight(player&);
+            fight(player);
         }
     }
+
+    return 0;
 }

@@ -1,0 +1,4 @@
+- Make shields and swords equipable
+- Colorify stuff
+- Add armor
+- Too much weight makes you deal less damage
