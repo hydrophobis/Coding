@@ -2,8 +2,7 @@ scan ports, port 22 hides itself unless you use random scans
 
 port 8000 is open with a web server on it
 
-the server claims to be under dev but a secret dir(which you can guess because the name of 
-the hacker group is that) contains what you need
+the server claims to be under dev but a secret dir contains what you need
 
 you still need a username and password to login as zenith, they are both located in the zenithadmin.dll
 as Matt Burchowski. You only know he is correct because if you downloaded a file named zenith.png
