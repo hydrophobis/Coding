@@ -13,7 +13,6 @@
 
 #include "def.hpp"
 #include "inc.hpp"
-#include "items.hpp"
 
 using namespace std;
 
@@ -213,18 +212,21 @@ bool useFood(Item& item, Player& player) {
 
 // Function to use equipment items (sword, shield, armor)
 bool useEquipment(Item& item, Player& player) {
-    if (item.damage > 0) {
+    if ( contains(item.name, "Sword")) {
         player.sword = item;
         return true; // Sword equipped
-    } else if (item.block > 0) {
-        if (item.name.find("Armor") != std::string::npos) {
-            player.armor = item;
-        } else {
-            player.shield = item;
-        }
-        return true; // Armor or shield equipped
+    } else if ( contains(item.name, "Greaves")) {
+        player.greaves = item;
+        return true; // Greaves equipped
+    } else if ( contains(item.name, "Chestplate") ){
+        player.chestplate = item;
+        return true; // Chestplate equipped
+    } else if ( contains(item.name, "Shield")){
+        player.shield = item;
+        return true; // Shield equipped       
+    } else {
+        return false; // Not an equipment item
     }
-    return false; // Not an equipment item
 }
 
 // Function to handle selecting and using items from the inventory
