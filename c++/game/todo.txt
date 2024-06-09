@@ -1,5 +1,5 @@
 - Add % damage addition for player level to weapons
-- add effects
+- Add effects
 - Colorify stuff
-- Add armor
-- Too much weight makes you deal less damage
+- Finish adding armor and food
+- Add more enemies, integrate effects

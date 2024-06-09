@@ -36,7 +36,8 @@
 #define MENU_ACTION "\
 1. Explore\n\
 2. View Inventory\n\
-3. Use Item\n"
+3. Use Item\n\
+9. Save Game\n"
 
 #define RESET   "\033[0m"   // Resets color to default
 #define RED     "\033[31m"  // Red text
@@ -47,5 +48,13 @@
 #define CYAN    "\033[36m"  // Cyan text
 #define WHITE   "\033[37m"  // White text (default)
 #define BOLONG  "\033[1m"   // Bolong double text
+#define BRIGHT_BLACK    "\x1b[30;1m"
+#define BRIGHT_RED      "\x1b[31;1m"
+#define BRIGHT_GREEN    "\x1b[32;1m"
+#define BRIGHT_YELLOW   "\x1b[33;1m"
+#define BRIGHT_BLUE     "\x1b[34;1m"
+#define BRIGHT_MAGENTA  "\x1b[35;1m"
+#define BRIGHT_CYAN     "\x1b[36;1m"
+#define BRIGHT_WHITE    "\x1b[37;1m"
 
 #define ENDL std::cout << std::endl;
