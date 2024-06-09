@@ -99,6 +99,17 @@ struct Effect {
     };
 };
 
+struct Orb : public Item {
+    static Effect effect;
+    string story;
+
+    void tellStory(){
+        system("clear");
+        cout << story;
+        cout << "\n1. Done";
+    }
+};
+
 class Player : public Entity {
 public:
     int healthMax;
