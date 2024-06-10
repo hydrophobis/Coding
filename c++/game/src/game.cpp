@@ -50,7 +50,7 @@ char** readFile(const std::string& fileName, int& lineCount);
 
 Entity genEnemy(int lvl) {
     string enemyName;
-    int enemyLvl = rand() % lvl + (lvl * 1.5); 
+    unsigned int enemyLvl = rand() % lvl + (lvl * 1.5); 
     int health = enemyLvl * ((rand() % 10) * 0.2);
     int damage = enemyLvl * ((rand() % 10) * 0.1);
     double multi;
@@ -100,22 +100,44 @@ void outputStats(Player& player) {
     cout << player.name << "'s stats:\n" << "\nLevel: " << YELLOW << to_string(player.level) << RESET << "\nExperience: " << CYAN << to_string(player.exp) << RESET << "\nHealth: " << RED << to_string(player.health) << " / " << to_string(player.healthMax) << RESET << "\nDamage: " << MAGENTA << to_string(player.damage) << RESET << "\nDefense: " << BLUE << to_string(player.defense) << RESET << "\nWeight: " << BRIGHT_YELLOW << player.weight << RESET << "\nSword: " << GREEN << player.sword.name << RESET << "\nShield: " << GREEN << player.shield.name << RESET << "\nChestplate: " << GREEN << player.chestplate.name << RESET << "\nGreaves: " << GREEN << player.greaves.name << RESET << endl;
 }
 
-double updateStats(Player& player) {
+double updateStats(Game& game, Player& player) {
     player.weight = player.sword.weight + player.greaves.weight + player.shield.weight + player.chestplate.weight;
 
-    double damageReduction = 0.25 * player.weight;
-    player.damage = max(0.0, (player.sword.damage + STAT_BASE_DAMAGE) * (1.0 - damageReduction));
+    // Calculate damage reduction per weight unit
+    double damageReductionPerUnit = 0.25;
+    double totalDamageReduction = damageReductionPerUnit * player.weight;
 
+    // Calculate the reduction factor based on weight
+    double reductionFactor = 1.0 - totalDamageReduction;
+
+    // Apply damage reduction to player's damage
+    player.damage = static_cast<int>((player.sword.damage + STAT_BASE_DAMAGE) * reductionFactor);
+
+    // Update player's defense
     player.defense = player.greaves.block + player.chestplate.block + player.shield.block;
 
+    // Ensure player's health does not exceed maximum health
     if (player.health > player.healthMax) {
         player.health = player.healthMax;
     }
 
-    return damageReduction;
+    // Update game's player stats
+    game.player.health = player.health;
+    game.player.healthMax = player.healthMax;
+    game.player.damage = player.damage;
+    game.player.inventory = player.inventory;
+    game.player.sword = player.sword;
+    game.player.shield = player.shield;
+    game.player.greaves = player.greaves;
+    game.player.chestplate = player.chestplate;
+    game.player.exp = player.exp;
+    game.player.level = player.level;
+
+    return totalDamageReduction; // Return the total damage reduction applied
 }
 
-int fight(Player& player) {
+
+int fight(Game& game, Player& player) {
     int hp = player.health;
     int baseDamage = player.damage; // Include sword damage in base damage
     vector<unsigned int> inv = player.inventory;
@@ -131,13 +153,13 @@ int fight(Player& player) {
         enemies.push_back(enemy);
     }
 
-    //system("clear");
+    system("clear");
 
     while (!enemies.empty()) {
-        updateStats(player);
+        updateStats(game, player);
         if (!expCalc) {
             for (int i = 0; i < enemies.size(); ++i) {
-                exp = (enemies[i].level / ((rand() % 5) + 0.1));
+                exp = (enemies[i].level / ((rand() % 8) + 1.0));
             }
             expCalc = true;
         }
@@ -168,10 +190,9 @@ int fight(Player& player) {
                 }
                 case 2: {
                     // Calculate player's total damage
-                    int playerDamage = max(0, baseDamage); // Ensure damage is not negative
-                    if ((rand() % 9) - player.sword.weight - player.shield.weight > 0) {
-                        enemies[i].health -= playerDamage;
-                        cout << "You attacked the " << enemies[i].name << " for " << playerDamage << " damage!\n";
+                    if ((rand() % 9) - player.weight > 0) {
+                        enemies[i].health -= player.damage;
+                        cout << "You attacked the " << enemies[i].name << " for " << baseDamage << " damage!\n";
                     } else {
                         cout << "\nYou missed!\n";
                     }
@@ -189,10 +210,12 @@ int fight(Player& player) {
         }
 
         if (player.health <= 0) {
-            //system("clear");
+            system("clear");
             cout << GAME_OVER << "You lost all your health and were sent back to Tartarus" << endl;
             return 0;
         }
+
+        system("clear");
     }
 
     int gendItemIndex = generateItem(); // Generate the item index
@@ -202,7 +225,7 @@ int fight(Player& player) {
 
     player.exp += exp;
 
-    //system("clear");
+    system("clear");
     return 0;
 }
 
@@ -312,18 +335,21 @@ int main() {
     vector<Item> items = initializeItems();
     bool gameOver = false;
 
-    //system("clear");
+    system("clear");
     int option;
     cout << INTRO_1 << INTRO_2 << "\n" << MENU_MAIN;
     cin >> option;
     switch (option) {
         case 1:
+            system("clear");
+            FileManager fm;
+            fm.loadGameData(game, "savegame.dat");
             break;
         case 2: {
             string name;
             cout << endl << "Player Name: ";
             cin >> name;
-            //system("clear");
+            system("clear");
             game = newGame(name);
             break;
         }
@@ -352,19 +378,17 @@ int main() {
     player.chestplate = game.player.chestplate;
     player.greaves = game.player.greaves;
 
-    cout << "hp " << player.health;
-
     while (true) {
         string explorationResult;
 
         if (player.health <= 0) {
-            //system("clear");
+            system("clear");
             gameOver = true;
             cout << GAME_OVER << "You lost all your health and were sent back to Tartarus" << endl;
             return 0;
         }
 
-        updateStats(player);
+        updateStats(game, player);
         player.levelUp(player);
 
         outputStats(player);
@@ -383,7 +407,7 @@ int main() {
             continue;
         }
 
-        //system("clear");
+        system("clear");
 
         switch (option) {
             case 1: {
@@ -410,11 +434,12 @@ int main() {
                 choice--;
 
                 useSelectedItem(choice, player, items);
-                //system("clear");
+                system("clear");
                 break;
             }
             case 9: {
-                saveGame(game);
+                FileManager fm;
+                fm.saveGameData(game, "savegame.dat");
             }
             default:
                 cout << "Invalid option.\n";
@@ -427,9 +452,9 @@ int main() {
             cout << "You found a chest! It contains a " << GREEN << items[gendItem].name << RESET << endl;
             cin.ignore();
         } else if (explorationResult == "enemy") {
-            fight(player);
+            fight(game, player);
         } else if (explorationResult == "trap") {
-            //system("clear");
+            system("clear");
             int damage = (rand() % 10) * (player.health / 10);
             cout << "Oh no there was a trap!\nYou took " << RED << damage << RESET << " damage\n";
             player.health -= damage;

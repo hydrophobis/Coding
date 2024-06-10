@@ -29,7 +29,7 @@
 
 
 #define MENU_MAIN "\
-1. Continue(WIP)\n\
+1. Continue Saved Game\n\
 2. New Game\n\
 3. Quit\n"
 

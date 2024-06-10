@@ -229,21 +229,17 @@ public:
     }
 
     void loadGameData(Game& game, string filename) {
-        cout << "1";
-        ifstream file; cout << "1,2";
-        file.open("savegame.dat", std::ios::binary); cout << "1,3";
-        /*if (!file) {
+
+        ifstream file;
+        file.open(filename, std::ios::binary);
+        if (!file) {
             cerr << "Error opening file for reading: " << filename << endl;
             return;
-        }*/
-        cout << "2";
+        }
         cereal::BinaryInputArchive archive(file);
         archive(game);
-        cout << "3";
 
         // Debug output
-        const Player& player = game.player;
-        cout << "Loaded game data:\n";
-        cout << "Name: " << player.name << "\nHealth: " << player.health << "\nMax Health: " << player.healthMax << "\nWeight: " << player.weight << "\n";
+        const Player& player = game.player; 
     }
 };
