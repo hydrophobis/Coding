@@ -26,7 +26,7 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
             currentCombination[pos--] = 0;
         }
 
-        cout << currentString << "\n";
+        //cout << currentString << "\n";
 
         ++guesses;
 

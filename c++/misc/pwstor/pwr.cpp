@@ -18,7 +18,7 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
         exit(0);
     }
 
-    cout << currentString << "\n";
+    //cout << currentString << "\n";
 
     for (char c : charSet) {
         currentString.push_back(c);

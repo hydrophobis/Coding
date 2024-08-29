@@ -7,12 +7,13 @@
 #include <atomic>
 #include <sstream>
 #include <iomanip>
-#include <algorithm>
+#include <mutex>
 
 using namespace std;
 using namespace chrono;
 
 bool debug = false;
+mutex mtx; // Mutex for synchronized output
 
 string sha256(const string &str) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -32,8 +33,11 @@ void attemptCombination(const string &charSet, int maxLength, const string &pass
 
     if (currentString.size() == maxLength) {
         if (sha256(currentString) == passwordHash) {
-            found = true;
-            cout << "\nFound " << passwordHash << "(" << currentString << ")" << " with " << guesses << " guesses";
+            lock_guard<mutex> lg(mtx);
+            if (!found) { // Double-check to avoid multiple findings
+                found = true;
+                cout << "\nFound " << passwordHash << " (" << currentString << ") with " << guesses << " guesses\n";
+            }
         }
         return;
     }
@@ -41,6 +45,7 @@ void attemptCombination(const string &charSet, int maxLength, const string &pass
     for (char c : charSet) {
         guesses++;
         attemptCombination(charSet, maxLength, passwordHash, currentString + c, found, guesses);
+        if (found) return; // Stop if found
     }
 }
 
@@ -48,20 +53,6 @@ void workerThread(const string &charSet, int maxLength, const string &passwordHa
     for (int i = start; i < charSet.size() && !found; i += stride) {
         string currentString(1, charSet[i]);
         attemptCombination(charSet, maxLength, passwordHash, currentString, found, guesses);
-    }
-}
-
-void incrementPasswordLength(const string &charSet, int &maxLength, const string &passwordHash, atomic<bool> &found, atomic<long long> &guesses, int numThreads) {
-    cout << "Password not found in length " << maxLength << ", incrementing length\n";
-    maxLength++;
-
-    vector<thread> threads;
-    for (int i = 0; i < numThreads; ++i) {
-        threads.emplace_back(workerThread, ref(charSet), maxLength, ref(passwordHash), ref(found), ref(guesses), i, numThreads);
-    }
-
-    for (auto &t : threads) {
-        t.join();
     }
 }
 
@@ -102,22 +93,27 @@ int main(int argc, char* argv[]){
 
     int numThreads = thread::hardware_concurrency();
     vector<thread> threads;
-    for (int i = 0; i < numThreads; ++i) {
-        threads.emplace_back(workerThread, ref(charSet), maxLength, ref(passwordHash), ref(found), ref(guesses), i, numThreads);
-    }
 
-    for (auto &t : threads) {
-        t.join();
+    while (!found) {
+        threads.clear(); // Clear thread vector for the next iteration
+        for (int i = 0; i < numThreads; ++i) {
+            threads.emplace_back(workerThread, ref(charSet), maxLength, ref(passwordHash), ref(found), ref(guesses), i, numThreads);
+        }
+
+        for (auto &t : threads) {
+            t.join();
+        }
+
+        if (!found) {
+            cout << "Password not found in length " << maxLength << ", incrementing length\n";
+            maxLength++;
+        }
     }
 
     auto end = high_resolution_clock::now();
-    duration<double, std::milli> duration_ms = end - start;
+    duration<double> elapsed_seconds = end - start;
 
-    while (!found) {
-        incrementPasswordLength(charSet, maxLength, passwordHash, found, guesses, numThreads);
-    }
-
-    cout << " in " << duration_ms.count() / 1000 << "s\n";
+    cout << "\nTime elapsed: " << elapsed_seconds.count() << "s\n";
 
     return 0;
 }

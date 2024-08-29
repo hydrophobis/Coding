@@ -35,7 +35,7 @@ void generateCombinations(const string& charSet, int maxLength, const string& pa
         currentString.pop_back();
     }
 
-    cout << currentString << "\n";
+    //cout << currentString << "\n";
 }
 
 void generateCombinations2(const string& charSet, int maxLength, const string& password, string& currentString, int& guesses) {

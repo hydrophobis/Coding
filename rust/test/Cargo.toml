@@ -1,0 +1,10 @@
+[package]
+name = "test"
+version = "0.1.0"
+authors = ["CamoGekko"]
+edition = "2021"
+
+[dependencies]
+sha2 = "0.10"
+rayon = "1.7"
+num_cpus = "1.13"
