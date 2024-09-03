@@ -201,13 +201,13 @@ fn main() {
             }
 
             "--help" | "-h" => { // Prints the help text, quick explanations and examples for the commands
-                print!("Usage:\nNote that every args pipes its output to the next meaning you can load, chain some adds or removes then save in the same command\n
-                --save, -s   \tSaves the list to the filename,                           -s filename\n
-                --load, -l   \tLoads the specified filename to the process,              -l filename\n
-                --add, -a    \tAdds an entry to the loaded list,                         -a \"entry\"\n
-                --remove, -r \tRemoves an entry from the loaded list using index number, -r 1\n
-                --move, -m   \tSwaps the entries with each other                         -m 1 2\n
-                --display, -d\tDisplays the values of the loaded list,                   -d\n
+                print!("Usage:\nNote that every args pipes its output to the next meaning you can load, chain some adds or removes then save in the same command
+                --save, -s   \tSaves the list to the filename,                           -s filename
+                --load, -l   \tLoads the specified filename to the process,              -l filename
+                --add, -a    \tAdds an entry to the loaded list,                         -a \"entry\"
+                --remove, -r \tRemoves an entry from the loaded list using index number, -r 1
+                --move, -m   \tSwaps the entries with each other                         -m 1 2
+                --display, -d\tDisplays the values of the loaded list,                   -d
                 --repair, -re\tRepairs the list by fixing duplicate index numbers,       -re\n");
                 i += 1;
             }
