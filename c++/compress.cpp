@@ -52,10 +52,10 @@ std::string compress(const std::string& data, std::unordered_map<char, std::stri
 
     std::stringstream encoding_table;
     for (const auto& pair : encoding) {
-        encoding_table << pair.second << ":" << pair.first << ";";
+        encoding_table << pair.second << "\0" << pair.first << "\1";
     }
 
-    return compressed_data.str() + "\1" + encoding_table.str();
+    return compressed_data.str() + "\2" + encoding_table.str();
 }
 
 

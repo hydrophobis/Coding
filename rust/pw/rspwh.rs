@@ -46,13 +46,13 @@ fn increment_indices(indices: &mut [usize], base: usize) -> bool {
 
 fn main() {
     let charset: Vec<char> = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789".chars().collect();
-    let target_password = "for";
+    let target_hash = "10C22BCF4C768B515BE4E94BCAFC71BF3E8FB5F70B2584BCC8C7533217F2E7F9";
     let max_len = 3;
 
     // Compute the target hash
-    let mut hasher = Sha256::new();
-    hasher.update(target_password);
-    let target_hash = format!("{:x}", hasher.finalize());
+   // let mut hasher = Sha256::new();
+   // hasher.update(target_password);
+   // let target_hash = format!("{:x}", hasher.finalize());
 
     let start_time = Instant::now();
     match brute_force(&target_hash, &charset, max_len) {

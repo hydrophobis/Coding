@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "test"
+    "test",
+    "learning_projects/todo_list"
 ]
 
