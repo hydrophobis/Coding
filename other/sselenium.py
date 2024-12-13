@@ -14,7 +14,7 @@ chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Path to your ChromeDriver (adjust accordingly)
-chromedriver_path = "/path/to/chromedriver"
+chromedriver_path = "chrome.pkr"
 chrome_service = ChromeService(executable_path=chromedriver_path)
 
 # Create a new Selenium WebDriver
