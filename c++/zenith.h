@@ -1,5 +1,5 @@
-#ifndef NULLIUM_H
-#define NULLIUM_H
+#ifndef OCULAR_H
+#define OCULAR_H
 
 #include <iostream>
 #include <vector>
@@ -136,7 +136,7 @@ public:
 // Place in a function to log anytime it is called
 #define AUTOLOG Log log(__func__);
 
-// Define a macro to track function calls using the Watch class
+// Define a macro to track function calls
 #define WATCH \
     do { \
         Watch watch; \
