@@ -1,5 +1,0 @@
-- Add % damage addition for player level to weapons
-- Add effects
-- Colorify stuff
-- Finish adding armor and food
-- Add more enemies, integrate effects
