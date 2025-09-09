@@ -1,6 +1,7 @@
 #include <iostream>
 #include <gmp.h>
 #include <chrono>
+#include <thread>
 
 void fib_fast_doubling(mpz_t fn, mpz_t fn1, unsigned long long n) {
     mpz_t a, b, c, d, tmp1, tmp2;
@@ -38,8 +39,19 @@ int main() {
     mpz_inits(fn, fn1, nullptr);
 
     unsigned long long low = 0;
-    unsigned long long high = 100'000'000; // barely over 1 second
+    unsigned long long high = 200'000'000; // barely over 1 second
     unsigned long long best = 0;
+
+    // Get CPU running on boost
+    auto warmup_start = std::chrono::high_resolution_clock::now();
+    while (std::chrono::high_resolution_clock::now() - warmup_start < std::chrono::milliseconds(200)) {
+        asm volatile("" ::: "memory"); // prevent the compiler from optimizing away the loop
+    }
+    auto spin_start = std::chrono::high_resolution_clock::now();
+    while (std::chrono::high_resolution_clock::now() - spin_start < std::chrono::milliseconds(100)) { }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+
     
     #define time 1.0
 
