@@ -75,7 +75,14 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "strstream": "cpp"
+        "strstream": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "format": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp",
+        "stop_token": "cpp"
     },
     "dotnet.preferCSharpExtension": true,
     "dotnet.defaultSolution": "disable"
