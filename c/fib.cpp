@@ -1,80 +1,105 @@
 #include <iostream>
 #include <gmp.h>
 #include <chrono>
-#include <thread>
+#include <cstring>
 
-void fib_fast_doubling(mpz_t fn, mpz_t fn1, unsigned long long n) {
+// Highly optimized Fibonacci computation without binary search
+void fib_fast(mpz_t result, unsigned long long n) {
+    if (n == 0) {
+        mpz_set_ui(result, 0);
+        return;
+    }
+    if (n == 1 || n == 2) {
+        mpz_set_ui(result, 1);
+        return;
+    }
+    
+    // Pre-allocate memory based on expected size
+    // Fibonacci numbers grow as φ^n/√5, where φ ≈ 1.618
+    // log2(F(n)) ≈ n * log2(φ) ≈ n * 0.694
+    size_t estimated_bits = (size_t)(n * 0.694) + 100; // Extra padding
+    
     mpz_t a, b, c, d, tmp1, tmp2;
     mpz_inits(a, b, c, d, tmp1, tmp2, nullptr);
+    
+    // Pre-allocate memory to avoid reallocations during computation
+    mpz_realloc2(a, estimated_bits);
+    mpz_realloc2(b, estimated_bits);
+    mpz_realloc2(c, estimated_bits);
+    mpz_realloc2(d, estimated_bits);
+    mpz_realloc2(tmp1, estimated_bits);
+    mpz_realloc2(tmp2, estimated_bits);
 
-    mpz_set_ui(a, 0);
-    mpz_set_ui(b, 1);
+    mpz_set_ui(a, 0);  // F(0)
+    mpz_set_ui(b, 1);  // F(1)
 
-    for (int i = 63 - __builtin_clzll(n); i >= 0; --i) {
-        mpz_mul_ui(tmp1, b, 2);
-        mpz_sub(tmp1, tmp1, a);
-        mpz_mul(c, a, tmp1);
+    // Find the position of the most significant bit
+    int start_bit = 63 - __builtin_clzll(n) - 1;
+    
+    // Fast matrix exponentiation using binary method
+    for (int i = start_bit; i >= 0; --i) {
+        // Matrix squaring: [[a,b],[b,c]] -> [[c,d],[d,e]]
+        // where c = a*(2*b-a), d = a² + b²
+        
+        mpz_mul_2exp(tmp1, b, 1);  // tmp1 = 2*b (left shift by 1 bit)
+        mpz_sub(tmp1, tmp1, a);    // tmp1 = 2*b - a
+        mpz_mul(c, a, tmp1);       // c = a * (2*b - a)
 
-        mpz_mul(tmp1, a, a);
-        mpz_mul(tmp2, b, b);
-        mpz_add(d, tmp1, tmp2);
+        mpz_mul(tmp1, a, a);       // tmp1 = a²
+        mpz_mul(tmp2, b, b);       // tmp2 = b²
+        mpz_add(d, tmp1, tmp2);    // d = a² + b²
 
+        // Check if current bit of n is set
         if ((n >> i) & 1) {
-            mpz_set(a, d);
-            mpz_add(b, c, d);
+            // Matrix multiplication by [[0,1],[1,1]]
+            mpz_set(a, d);         // new a = d
+            mpz_add(b, c, d);      // new b = c + d
         } else {
-            mpz_set(a, c);
-            mpz_set(b, d);
+            mpz_set(a, c);         // new a = c
+            mpz_set(b, d);         // new b = d
         }
     }
 
-    mpz_set(fn, a);
-    mpz_set(fn1, b);
-
+    mpz_set(result, a);  // F(n)
     mpz_clears(a, b, c, d, tmp1, tmp2, nullptr);
 }
 
-int main() {
-    mpz_t fn, fn1;
-    mpz_inits(fn, fn1, nullptr);
-
-    unsigned long long low = 0;
-    unsigned long long high = 200'000'000; // barely over 1 second
-    unsigned long long best = 0;
-
-    // Get CPU running on boost
-    auto warmup_start = std::chrono::high_resolution_clock::now();
-    while (std::chrono::high_resolution_clock::now() - warmup_start < std::chrono::milliseconds(200)) {
-        asm volatile("" ::: "memory"); // prevent the compiler from optimizing away the loop
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <n>" << std::endl;
+        std::cerr << "Computes the nth Fibonacci number F(n)" << std::endl;
+        return 1;
     }
-    auto spin_start = std::chrono::high_resolution_clock::now();
-    while (std::chrono::high_resolution_clock::now() - spin_start < std::chrono::milliseconds(100)) { }
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-
+    unsigned long long n = std::strtoull(argv[1], nullptr, 10);
     
-    #define time 1.0
+    mpz_t result;
+    mpz_init(result);
 
-    while (low <= high) {
-        unsigned long long mid = low + (high - low) / 2;
+    std::cout << "Computing F(" << n << ")..." << std::endl;
 
-        auto start = std::chrono::high_resolution_clock::now();
-        fib_fast_doubling(fn, fn1, mid);
-        auto end = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
+    fib_fast(result, n);
+    auto end = std::chrono::high_resolution_clock::now();
 
-        double elapsed = std::chrono::duration<double>(end - start).count();
-        std::cout << mid << ": " << elapsed << std::endl;
-        if (elapsed <= time) {
-            best = mid;
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
+    double elapsed = std::chrono::duration<double>(end - start).count();
+    
+    std::cout << "Computation time: " << elapsed << " seconds" << std::endl;
+    std::cout << "F(" << n << ") has " << mpz_sizeinbase(result, 10) << " decimal digits" << std::endl;
+    
+    // Display the number (abbreviated if too long)
+    char* str = mpz_get_str(nullptr, 10, result);
+    size_t len = strlen(str);
+    
+    if (len <= 100) {
+        std::cout << "F(" << n << ") = " << str << std::endl;
+    } else {
+        std::cout << "F(" << n << ") = " << std::string(str, 50) << "..." 
+                  << std::string(str + len - 50, 50) << std::endl;
     }
-
-    std::cout << "Largest F(n) computable in " << time << " second(s): F(" << best << ")\n";
-    std::cout << "It has " << mpz_sizeinbase(fn, 10) << " decimal digits\n";
-
-    mpz_clears(fn, fn1, nullptr);
+    
+    free(str);
+    mpz_clear(result);
+    
     return 0;
 }
